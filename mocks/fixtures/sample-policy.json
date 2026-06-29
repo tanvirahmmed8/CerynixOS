@@ -1,0 +1,13 @@
+{
+  "policy_id": "pol-dev-default-001",
+  "version": 1,
+  "rules": {
+    "allowed_tools": [
+      "file_read",
+      "file_write",
+      "systemctl_status",
+      "journalctl_read"
+    ],
+    "approval_mode": "ask_before_act"
+  }
+}

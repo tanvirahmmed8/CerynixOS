@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-06-29T10:00:00Z",
+  "service": "cerynix-action-broker",
+  "action": "systemctl_restart_nginx",
+  "status": "success",
+  "details": {
+    "user_prompt": "Restart the web server",
+    "policy_version": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Health Report Format",
+  "type": "object",
+  "required": ["device_id", "timestamp", "health_score", "components"],
+  "properties": {
+    "device_id": {
+      "type": "string",
+      "description": "Unique hardware identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time of report generation"
+    },
+    "health_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Aggregate system health (100 is perfect)"
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "cpu": { "type": "string", "enum": ["healthy", "degraded", "critical"] },
+        "memory": { "type": "string", "enum": ["healthy", "degraded", "critical"] },
+        "storage": { "type": "string", "enum": ["healthy", "degraded", "critical"] },
+        "services": { "type": "string", "enum": ["healthy", "degraded", "critical"] }
+      },
+      "required": ["cpu", "memory", "storage", "services"]
+    }
+  }
+}

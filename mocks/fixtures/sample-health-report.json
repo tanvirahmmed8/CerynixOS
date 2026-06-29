@@ -1,0 +1,11 @@
+{
+  "device_id": "dev_mock_alpha_01",
+  "timestamp": "2026-06-29T10:05:00Z",
+  "health_score": 95,
+  "components": {
+    "cpu": "healthy",
+    "memory": "degraded",
+    "storage": "healthy",
+    "services": "healthy"
+  }
+}

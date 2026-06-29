@@ -9,6 +9,7 @@ Follow these rules:
 * Keep outputs short and high signal.
 * Follow existing architecture and milestone scope.
 * Prefer simple, testable, modular code.
+* Default v1 assistant model is `qwen2.5-0.5b-instruct-q4_k_m.gguf` unless docs explicitly change it.
 * Do not break folder boundaries.
 * Do not add hidden behavior, magic defaults, or silent side effects.
 * If a feature changes behavior, update its docs in the same task.

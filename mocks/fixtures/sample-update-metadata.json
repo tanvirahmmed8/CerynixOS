@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0-beta.1",
+  "channel": "pilot",
+  "image_url": "https://mock.cerynixos.internal/releases/1.0.0-beta.1.iso",
+  "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "force_rollback": false
+}

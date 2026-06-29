@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Audit Event Format",
+  "type": "object",
+  "required": ["timestamp", "service", "action", "status"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the action occurred"
+    },
+    "service": {
+      "type": "string",
+      "description": "Which local service initiated the action"
+    },
+    "action": {
+      "type": "string",
+      "description": "Description of the privileged action (e.g., 'modified_config', 'ran_tool')"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed", "denied_by_policy"],
+      "description": "Outcome of the action"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional context (e.g., command arguments, error messages)"
+    }
+  }
+}

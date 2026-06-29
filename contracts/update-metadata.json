@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Update Metadata Format",
+  "type": "object",
+  "required": ["version", "channel", "image_url", "sha256_hash"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Target OS version string"
+    },
+    "channel": {
+      "type": "string",
+      "enum": ["canary", "pilot", "broad", "critical"],
+      "description": "Release ring/channel"
+    },
+    "image_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Location to download the update payload"
+    },
+    "sha256_hash": {
+      "type": "string",
+      "description": "Hash of the update payload for verification"
+    },
+    "force_rollback": {
+      "type": "boolean",
+      "description": "If true, instructs the device to revert to the previous working generation"
+    }
+  }
+}

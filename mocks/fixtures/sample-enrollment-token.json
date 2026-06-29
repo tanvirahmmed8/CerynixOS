@@ -1,0 +1,5 @@
+{
+  "token": "tok_mock_1234567890abcdef",
+  "organization_id": "org_mock_test_corp",
+  "endpoint": "https://mock.cerynixos.internal/api/v1/enroll"
+}

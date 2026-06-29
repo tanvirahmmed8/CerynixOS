@@ -60,6 +60,7 @@ CerynixOS is a Linux-based AI operating system that combines natural-language in
 
 ### 1. AI Interaction And Agent Runtime
 * Natural-language desktop, voice, and CLI assistant
+* Default v1 local assistant model: `qwen2.5-0.5b-instruct-q4_k_m.gguf`
 * Tool execution via sandboxed action framework
 * Approval modes: suggest-only, ask-before-act, auto-act within policy
 * Task memory with clear retention rules
@@ -173,6 +174,7 @@ Cross-cutting security layer.
 
 ### Phase 1: Platform Core And Safe AI Foundation (6-8 weeks)
 * Build reproducible base image and installer foundation
+* Package and validate `qwen2.5-0.5b-instruct-q4_k_m.gguf` as the default local assistant model
 * Implement local AI assistant with text interface first
 * Create action broker with explicit permission boundaries
 * Add metrics, logs, and local diagnostics from day one
@@ -279,7 +281,7 @@ These are valuable, but they should not block the first enterprise-capable relea
 ## Suggested Technical Stack
 * **Base OS:** NixOS with flakes
 * **Kernel/observability:** Linux, cgroups v2, eBPF, journald pipeline, metrics exporters
-* **AI runtime:** Local SLM inference via `llama.cpp` or `vLLM` depending on hardware tier
+* **AI runtime:** Local inference via `llama.cpp` with `qwen2.5-0.5b-instruct-q4_k_m.gguf` as the default v1 assistant model; optional higher-tier runtime can be added later
 * **Policy/action layer:** Sandboxed action broker with explicit capability model
 * **UI:** KDE or GNOME base with custom assistant shell layer
 * **Build/release:** Reproducible image pipeline, signed artifacts, SBOM generation

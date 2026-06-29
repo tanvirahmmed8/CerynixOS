@@ -23,70 +23,73 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 ---
 
 ## Phase 0: Milestone Setup and Contracts
-* [ ] Define Milestone 1 scope boundaries and non-goals
-* [ ] Create device-plane architecture diagram
-* [ ] Define endpoint service list and ownership map
-* [ ] Write local interface contracts for:
-* [ ] Policy fetch format
-* [ ] Enrollment token format
-* [ ] Update metadata format
-* [ ] Audit event schema
-* [ ] Health report schema
-* [ ] Create mock services and fixture files for all remote contracts
-* [ ] Define local development workflow for image build, run, rollback, and log collection
-* [ ] Establish coding standards, repo folders, and naming rules for device services
+* [x] Define Milestone 1 scope boundaries and non-goals
+* [x] Create device-plane architecture diagram
+* [x] Define endpoint service list and ownership map
+* [x] Write local interface contracts for:
+* [x] Policy fetch format
+* [x] Enrollment token format
+* [x] Update metadata format
+* [x] Audit event schema
+* [x] Health report schema
+* [x] Create mock services and fixture files for all remote contracts
+* [x] Define local development workflow for image build, run, rollback, and log collection
+* [x] Establish coding standards, repo folders, and naming rules for device services
 
 ## Phase 1: Base OS Foundation
-* [ ] Set up NixOS flake structure for CerynixOS
-* [ ] Create base system modules for common packages and services
-* [ ] Define hardware profiles for first target devices
-* [ ] Configure boot flow and system defaults
-* [ ] Configure immutable/declarative system management patterns
-* [ ] Create reproducible image build pipeline for:
-* [ ] VM image
-* [ ] Installer ISO
-* [ ] Bare metal test image
-* [ ] Add rollback-safe system generation workflow
-* [ ] Add baseline package set for developer workstation profile
-* [ ] Add baseline package set for creator workstation profile
-* [ ] Document local image build and flash process
+* [x] Set up NixOS flake structure for CerynixOS
+* [x] Create base system modules for common packages and services
+* [x] Define hardware profiles for first target devices
+* [x] Configure boot flow and system defaults
+* [x] Configure immutable/declarative system management patterns
+* [x] Create reproducible image build pipeline for:
+* [x] VM image
+* [x] Installer ISO
+* [x] Bare metal test image
+* [x] Add rollback-safe system generation workflow
+* [x] Add baseline package set for developer workstation profile
+* [x] Add baseline package set for creator workstation profile
+* [x] Document local image build and flash process
 
 ## Phase 2: Local AI Runtime Foundation
-* [ ] Select primary local inference engine for low-to-mid hardware
-* [ ] Select optional accelerated inference path for high-end hardware
-* [ ] Define model packaging layout and versioning
-* [ ] Build local model loader service
-* [ ] Build inference manager with:
-* [ ] Model selection rules
-* [ ] Memory budget enforcement
-* [ ] Timeout handling
-* [ ] Fallback behavior
-* [ ] Add prompt templating layer for OS tasks
-* [ ] Add local task memory storage with retention limits
-* [ ] Add privacy mode to disable memory persistence
-* [ ] Create benchmark suite for inference latency and memory usage
-* [ ] Validate runtime behavior on minimum supported hardware
+* [x] Lock `llama.cpp` as the primary local inference engine for v1
+* [x] Select optional accelerated inference path for high-end hardware
+* [x] Package `qwen2.5-0.5b-instruct-q4_k_m.gguf` as the default v1 assistant model
+* [x] Define model packaging layout and versioning
+* [x] Build local model loader service
+* [x] Build inference manager with:
+* [x] Model selection rules
+* [x] Memory budget enforcement
+* [x] Timeout handling
+* [x] Fallback behavior
+* [x] Add default model config for `qwen2.5-0.5b-instruct-q4_k_m.gguf`
+* [x] Secure API via Unix Domain Socket (UDS) instead of TCP to prevent port collisions
+* [x] Add prompt templating layer for OS tasks
+* [x] Add local task memory storage with retention limits
+* [x] Add privacy mode to disable memory persistence
+* [x] Create benchmark suite for inference latency and memory usage
+* [x] Validate runtime behavior of `qwen2.5-0.5b-instruct-q4_k_m.gguf` on minimum supported hardware
 
 ## Phase 3: Action Broker and Safe Execution Layer
-* [ ] Define capability model for privileged and non-privileged actions
-* [ ] Define allowed tool categories:
-* [ ] File operations
-* [ ] Process operations
-* [ ] Package/config operations
-* [ ] Service control
-* [ ] Desktop automation
-* [ ] Build action broker service
-* [ ] Add explicit approval modes:
-* [ ] Suggest-only
-* [ ] Ask-before-act
-* [ ] Auto-act within policy
-* [ ] Add command validation and argument sanitization
-* [ ] Add execution timeout and cancellation handling
-* [ ] Add structured result reporting
-* [ ] Add policy-driven deny list and allow list support
-* [ ] Add rollback hook support for mutating actions
-* [ ] Add audit event emission for all executed actions
-* [ ] Write integration tests for safe execution boundaries
+* [x] Define capability model for privileged and non-privileged actions
+* [x] Define allowed tool categories:
+* [x] File operations
+* [x] Process operations
+* [x] Package/config operations
+* [x] Service control
+* [x] Desktop automation
+* [x] Build action broker service
+* [x] Add explicit approval modes:
+* [x] Suggest-only
+* [x] Ask-before-act
+* [x] Auto-act within policy
+* [x] Add command validation and argument sanitization
+* [x] Add execution timeout and cancellation handling
+* [x] Add structured result reporting
+* [x] Add policy-driven deny list and allow list support
+* [x] Add rollback hook support for mutating actions
+* [x] Add audit event emission for all executed actions
+* [x] Write integration tests for safe execution boundaries
 
 ## Phase 4: Local Observability and Diagnostics
 * [ ] Define local metrics catalog for device services
