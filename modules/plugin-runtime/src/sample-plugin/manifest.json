@@ -1,0 +1,7 @@
+{
+  "name": "weather-plugin",
+  "version": "1.0.0",
+  "description": "A sample plugin that returns weather data for CerynixAI.",
+  "entrypoint": "main.py",
+  "permissions": ["network:read"]
+}

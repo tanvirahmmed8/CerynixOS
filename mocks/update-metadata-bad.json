@@ -1,0 +1,7 @@
+{
+  "version": "1.0.2",
+  "flake_url": "github:cerynixos/core/v1.0.2",
+  "urgency": "critical",
+  "description": "Critical security fix that accidentally breaks the action broker.",
+  "simulate_failure": true
+}

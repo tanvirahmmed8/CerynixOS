@@ -1,0 +1,7 @@
+{
+  "version": "1.0.1",
+  "flake_url": "github:cerynixos/core/v1.0.1",
+  "urgency": "normal",
+  "description": "Routine security and performance updates.",
+  "simulate_failure": false
+}

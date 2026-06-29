@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CerynixAI Overlay</title>
+    <link rel="stylesheet" href="index.css">
+    <!-- Using Google Fonts for a modern, sleek look -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="overlay-container">
+        <!-- Sidebar: Optimization & Health -->
+        <aside class="sidebar glass-panel">
+            <div class="branding">
+                <div class="logo-circle"></div>
+                <h1>CerynixOS</h1>
+            </div>
+            
+            <div class="metrics-card">
+                <h3>System Health</h3>
+                <div class="score-ring">
+                    <span id="healthScore">95</span>
+                </div>
+            </div>
+
+            <div class="dashboard-controls">
+                <h3>Optimization Profile</h3>
+                <select id="profileSelect" class="styled-select">
+                    <option value="balanced">Balanced</option>
+                    <option value="performance">Performance</option>
+                    <option value="battery_saver">Battery Saver</option>
+                    <option value="coding">Coding Mode</option>
+                </select>
+                
+                <h3>Privacy</h3>
+                <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                    <span class="toggle-label">Task Memory</span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- Main Chat Interface -->
+        <main class="chat-interface glass-panel">
+            <header class="chat-header">
+                <h2>CerynixAI</h2>
+                <div class="status-indicator online"></div>
+            </header>
+            
+            <div class="chat-history" id="chatHistory">
+                <div class="message assistant">
+                    <div class="avatar"></div>
+                    <div class="bubble">System fully optimized. How can I assist you today?</div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Ask CerynixAI to optimize or heal the system..." autocomplete="off">
+                <button id="sendBtn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </main>
+
+        <!-- Action Confirmation Modal -->
+        <div class="modal hidden" id="actionModal">
+            <div class="modal-content glass-panel">
+                <h3>⚠️ Action Required</h3>
+                <p>CerynixAI wants to run a privileged command:</p>
+                <code id="modalCommand">nixos-rebuild switch</code>
+                <div class="modal-actions">
+                    <button class="btn btn-deny" id="modalDeny">Deny</button>
+                    <button class="btn btn-approve" id="modalApprove">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

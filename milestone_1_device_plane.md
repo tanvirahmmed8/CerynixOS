@@ -125,77 +125,77 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 * [x] Validate optimization gains against baseline system image
 
 ## Phase 6: Self-Healing and Recovery v1
-* [ ] Define supported failure scenarios for v1:
-* [ ] Failed update rollback
-* [ ] Broken user configuration recovery
-* [ ] Common service restart failures
-* [ ] Package/config drift detection
-* [ ] Storage pressure cleanup suggestions
-* [ ] Build drift detection service
-* [ ] Build known-good state snapshot and restore flow
-* [ ] Add automatic rollback rules for safe scenarios
-* [ ] Add guided recovery UI for medium-confidence scenarios
-* [ ] Add recovery logs and user-facing explanation messages
-* [ ] Write scenario-based recovery tests
-* [ ] Validate no destructive recovery action occurs without policy allowance
+* [x] Define supported failure scenarios for v1:
+* [x] Failed update rollback
+* [x] Broken user configuration recovery
+* [x] Common service restart failures
+* [x] Package/config drift detection
+* [x] Storage pressure cleanup suggestions
+* [x] Build drift detection service
+* [x] Build known-good state snapshot and restore flow
+* [x] Add automatic rollback rules for safe scenarios
+* [x] Add guided recovery UI for medium-confidence scenarios
+* [x] Add recovery logs and user-facing explanation messages
+* [x] Write scenario-based recovery tests
+* [x] Validate no destructive recovery action occurs without policy allowance
 
 ## Phase 7: Desktop UX and CerynixAI Experience
-* [ ] Select desktop base: KDE or GNOME
-* [ ] Create CerynixOS shell branding and theme foundations
-* [ ] Build CerynixAI panel or overlay UI
-* [ ] Build text-first CerynixAI workflow
-* [ ] Add optional voice pipeline stub with local/offline-first path
-* [ ] Add action confirmation UX patterns
-* [ ] Add optimization dashboard UI
-* [ ] Add self-healing status UI
-* [ ] Add local privacy controls UI
-* [ ] Add accessibility pass for core assistant surfaces
-* [ ] Validate UX on laptop and desktop layouts
+* [x] Select desktop base: KDE or GNOME
+* [x] Create CerynixOS shell branding and theme foundations
+* [x] Build CerynixAI panel or overlay UI
+* [x] Build text-first CerynixAI workflow
+* [x] Add optional voice pipeline stub with local/offline-first path
+* [x] Add action confirmation UX patterns
+* [x] Add optimization dashboard UI
+* [x] Add self-healing status UI
+* [x] Add local privacy controls UI
+* [x] Add accessibility pass for core assistant surfaces
+* [x] Validate UX on laptop and desktop layouts
 
 ## Phase 8: Update Agent and Local Release Safety
-* [ ] Build local update agent
-* [ ] Implement update metadata parser using fixture contracts
-* [ ] Add staged update application flow
-* [ ] Add pre-update health checks
-* [ ] Add post-update verification checks
-* [ ] Add failed-update automatic rollback
-* [ ] Add user-facing update status and history
-* [ ] Write update simulation tests with mock metadata
+* [x] Build local update agent
+* [x] Implement update metadata parser using fixture contracts
+* [x] Add staged update application flow
+* [x] Add pre-update health checks
+* [x] Add post-update verification checks
+* [x] Add failed-update automatic rollback
+* [x] Add user-facing update status and history
+* [x] Write update simulation tests with mock metadata
 
 ## Phase 9: Plugin Runtime and Developer Extensibility
-* [ ] Define plugin packaging contract for device-side skills/tools
-* [ ] Implement plugin discovery flow
-* [ ] Implement plugin permission model
-* [ ] Implement plugin isolation and failure handling
-* [ ] Add plugin lifecycle management:
-* [ ] Install
-* [ ] Disable
-* [ ] Upgrade
-* [ ] Remove
-* [ ] Add developer sample plugin
-* [ ] Add plugin test harness
-* [ ] Add plugin audit and telemetry hooks
+* [x] Define plugin packaging contract for device-side skills/tools
+* [x] Implement plugin discovery flow
+* [x] Implement plugin permission model
+* [x] Implement plugin isolation and failure handling
+* [x] Add plugin lifecycle management:
+* [x] Install
+* [x] Disable
+* [x] Upgrade
+* [x] Remove
+* [x] Add developer sample plugin
+* [x] Add plugin test harness
+* [x] Add plugin audit and telemetry hooks
 
 ## Phase 10: Security Hardening on Device
-* [ ] Enable disk encryption baseline
-* [ ] Add secure secret storage integration
-* [ ] Add device identity placeholder flow for future TPM-backed enrollment
-* [ ] Harden local service permissions
-* [ ] Validate sandbox boundaries between assistant, broker, and plugins
-* [ ] Add model file integrity verification
-* [ ] Add plugin signature verification stub support
-* [ ] Review local attack surface and close obvious privilege-escalation paths
+* [x] Enable disk encryption baseline
+* [x] Add secure secret storage integration
+* [x] Add device identity placeholder flow for future TPM-backed enrollment
+* [x] Harden local service permissions
+* [x] Validate sandbox boundaries between assistant, broker, and plugins
+* [x] Add model file integrity verification
+* [x] Add plugin signature verification stub support
+* [x] Review local attack surface and close obvious privilege-escalation paths
 
 ## Phase 11: Quality, Certification, and Milestone Exit
-* [ ] Create milestone test matrix by hardware class
-* [ ] Run install tests in VM and on target hardware
-* [ ] Run resource stress tests
-* [ ] Run rollback and recovery tests
-* [ ] Run AI task safety regression tests
-* [ ] Run UX acceptance checklist
-* [ ] Freeze milestone scope
-* [ ] Publish Milestone 1 demo notes and operator guide
-* [ ] Document open issues, technical debt, and interfaces for Milestone 2 integration
+* [x] Create milestone test matrix by hardware class
+* [x] Run install tests in VM and on target hardware
+* [x] Run resource stress tests
+* [x] Run rollback and recovery tests
+* [x] Run AI task safety regression tests
+* [x] Run UX acceptance checklist
+* [x] Freeze milestone scope
+* [x] Publish Milestone 1 demo notes and operator guide
+* [x] Document open issues, technical debt, and interfaces for Milestone 2 integration
 
 ---
 
@@ -206,13 +206,13 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 * If a real control-plane API is not ready, continue using fixtures and adapter interfaces
 
 ## Milestone Exit Deliverables
-* [ ] Bootable CerynixOS image
-* [ ] Device service architecture document
-* [ ] Local AI runtime and action broker
-* [ ] Optimization engine v1
-* [ ] Self-healing v1
-* [ ] CerynixAI UI
-* [ ] Local observability and diagnostics tools
-* [ ] Update agent with rollback
-* [ ] Plugin runtime v1
-* [ ] Milestone validation report
+* [x] Bootable CerynixOS image
+* [x] Device service architecture document
+* [x] Local AI runtime and action broker
+* [x] Optimization engine v1
+* [x] Self-healing v1
+* [x] CerynixAI UI
+* [x] Local observability and diagnostics tools
+* [x] Update agent with rollback
+* [x] Plugin runtime v1
+* [x] Milestone validation report

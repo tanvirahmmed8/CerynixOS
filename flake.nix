@@ -19,6 +19,11 @@
           ./modules/action-broker
           ./modules/health
           ./modules/optimizer
+          ./modules/self-healing
+          ./modules/desktop
+          ./modules/update-agent
+          ./modules/plugin-runtime
+          ./modules/security
           ./profiles/workstation-dev
           {
             # VM specific overrides
@@ -41,6 +46,11 @@
           ./modules/action-broker
           ./modules/health
           ./modules/optimizer
+          ./modules/self-healing
+          ./modules/desktop
+          ./modules/update-agent
+          ./modules/plugin-runtime
+          ./modules/security
           ./profiles/workstation-dev
         ];
       };
@@ -54,6 +64,11 @@
           ./modules/action-broker
           ./modules/health
           ./modules/optimizer
+          ./modules/self-healing
+          ./modules/desktop
+          ./modules/update-agent
+          ./modules/plugin-runtime
+          ./modules/security
           ./profiles/workstation-dev
           # Hardware config would normally be included here via an import
           # e.g., ./hardware-configuration.nix
