@@ -1,0 +1,81 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Node / frontend tooling
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+dist/
+build/
+coverage/
+
+# Logs and local runtime data
+*.log
+logs/
+tmp/
+.tmp/
+.cache/
+
+# Secrets / local environment
+.env
+.env.*
+*.pem
+*.key
+*.crt
+secrets/
+
+# Database / state
+*.db
+*.sqlite
+*.sqlite3
+*.pid
+
+# OS image / VM / artifact outputs
+result
+result-*
+artifacts/
+out/
+release/
+images/
+iso/
+*.iso
+*.img
+*.qcow2
+*.vdi
+*.vmdk
+*.ova
+
+# Terraform / infra
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Nix
+/.direnv/
+/.devenv/
+
+# Project-local generated test data
+fixtures/generated/
+reports/
