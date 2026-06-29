@@ -23,6 +23,7 @@ This milestone covers the enterprise backend and operational layer: fleet enroll
 
 ## Phase 0: Milestone Setup and Contracts
 * [ ] Define Milestone 2 scope boundaries and non-goals
+* [ ] Review Milestone 1 tech_debt.md to map required backend APIs
 * [ ] Create control-plane architecture diagram
 * [ ] Define service boundary map for backend components
 * [ ] Freeze v1 API contracts for:
