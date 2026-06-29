@@ -1,0 +1,32 @@
+{
+  "balanced": {
+    "cpu_governor": "schedutil",
+    "energy_perf_pref": "balance_performance",
+    "swappiness": 60
+  },
+  "performance": {
+    "cpu_governor": "performance",
+    "energy_perf_pref": "performance",
+    "swappiness": 10
+  },
+  "battery_saver": {
+    "cpu_governor": "powersave",
+    "energy_perf_pref": "power",
+    "swappiness": 80
+  },
+  "gaming": {
+    "cpu_governor": "performance",
+    "energy_perf_pref": "performance",
+    "swappiness": 10
+  },
+  "coding": {
+    "cpu_governor": "schedutil",
+    "energy_perf_pref": "balance_performance",
+    "swappiness": 40
+  },
+  "rendering": {
+    "cpu_governor": "performance",
+    "energy_perf_pref": "performance",
+    "swappiness": 10
+  }
+}

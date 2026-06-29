@@ -2,7 +2,7 @@
 
 **The Enterprise AI Operating System**
 
-CerynixOS is a next-generation, local-first operating system built on the immutable foundations of NixOS. It embeds a lightweight, on-device AI runtime that acts as a deeply integrated system assistant, capable of understanding user intent and executing system administration tasks securely.
+CerynixOS is a next-generation, local-first operating system built on the immutable foundations of NixOS. It embeds a lightweight, on-device AI runtime that acts as a deeply integrated system assistant, **CerynixAI**, capable of understanding user intent and executing system administration tasks securely.
 
 ## Core Architecture
 

@@ -17,6 +17,8 @@
           ./modules/base
           ./modules/ai-runtime
           ./modules/action-broker
+          ./modules/health
+          ./modules/optimizer
           ./profiles/workstation-dev
           {
             # VM specific overrides
@@ -37,6 +39,8 @@
           ./modules/base
           ./modules/ai-runtime
           ./modules/action-broker
+          ./modules/health
+          ./modules/optimizer
           ./profiles/workstation-dev
         ];
       };
@@ -48,6 +52,8 @@
           ./modules/base
           ./modules/ai-runtime
           ./modules/action-broker
+          ./modules/health
+          ./modules/optimizer
           ./profiles/workstation-dev
           # Hardware config would normally be included here via an import
           # e.g., ./hardware-configuration.nix

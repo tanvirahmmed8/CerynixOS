@@ -15,7 +15,7 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 
 ## Done Definition
 * Bootable CerynixOS image exists
-* Local AI assistant can safely perform bounded actions
+* CerynixAI can safely perform bounded actions
 * Optimization and self-healing flows work on at least one certified hardware target
 * All privileged actions are logged locally
 * Device plane can later connect to a real control plane without major refactor
@@ -92,37 +92,37 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 * [x] Write integration tests for safe execution boundaries
 
 ## Phase 4: Local Observability and Diagnostics
-* [ ] Define local metrics catalog for device services
-* [ ] Define structured log format across all device components
-* [ ] Implement local health agent
-* [ ] Implement service heartbeat checks
-* [ ] Add crash capture and error bundle generation
-* [ ] Add local diagnostics CLI
-* [ ] Add local health score calculation
-* [ ] Add troubleshooting snapshot export
-* [ ] Add redaction rules for sensitive diagnostics content
-* [ ] Validate low-overhead observability behavior
+* [x] Define local metrics catalog for device services
+* [x] Define structured log format across all device components
+* [x] Implement local health agent
+* [x] Implement service heartbeat checks
+* [x] Add crash capture and error bundle generation
+* [x] Add local diagnostics CLI
+* [x] Add local health score calculation
+* [x] Add troubleshooting snapshot export
+* [x] Add redaction rules for sensitive diagnostics content
+* [x] Validate low-overhead observability behavior
 
 ## Phase 5: Optimization Engine v1
-* [ ] Define measurable optimization targets:
-* [ ] CPU responsiveness
-* [ ] Memory pressure recovery
-* [ ] I/O prioritization
-* [ ] Thermal stability
-* [ ] Battery efficiency
-* [ ] Implement real-time telemetry collector for optimization inputs
-* [ ] Implement rule-based optimization engine
-* [ ] Create workload profiles:
-* [ ] Coding
-* [ ] Gaming
-* [ ] Conferencing
-* [ ] Rendering
-* [ ] Battery saver
-* [ ] Add explainability layer for optimization decisions
-* [ ] Add one-click revert for profile and tuning changes
-* [ ] Add hardware override tables for known devices
-* [ ] Create before/after performance benchmark suite
-* [ ] Validate optimization gains against baseline system image
+* [x] Define measurable optimization targets:
+* [x] CPU responsiveness
+* [x] Memory pressure recovery
+* [x] I/O prioritization
+* [x] Thermal stability
+* [x] Battery efficiency
+* [x] Implement real-time telemetry collector for optimization inputs
+* [x] Implement rule-based optimization engine
+* [x] Create workload profiles:
+* [x] Coding
+* [x] Gaming
+* [x] Conferencing
+* [x] Rendering
+* [x] Battery saver
+* [x] Add explainability layer for optimization decisions
+* [x] Add one-click revert for profile and tuning changes
+* [x] Add hardware override tables for known devices
+* [x] Create before/after performance benchmark suite
+* [x] Validate optimization gains against baseline system image
 
 ## Phase 6: Self-Healing and Recovery v1
 * [ ] Define supported failure scenarios for v1:
@@ -139,11 +139,11 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 * [ ] Write scenario-based recovery tests
 * [ ] Validate no destructive recovery action occurs without policy allowance
 
-## Phase 7: Desktop UX and Assistant Experience
+## Phase 7: Desktop UX and CerynixAI Experience
 * [ ] Select desktop base: KDE or GNOME
 * [ ] Create CerynixOS shell branding and theme foundations
-* [ ] Build assistant panel or overlay UI
-* [ ] Build text-first assistant workflow
+* [ ] Build CerynixAI panel or overlay UI
+* [ ] Build text-first CerynixAI workflow
 * [ ] Add optional voice pipeline stub with local/offline-first path
 * [ ] Add action confirmation UX patterns
 * [ ] Add optimization dashboard UI
@@ -211,7 +211,7 @@ This milestone covers the endpoint OS experience: base system, local AI runtime,
 * [ ] Local AI runtime and action broker
 * [ ] Optimization engine v1
 * [ ] Self-healing v1
-* [ ] Desktop assistant UI
+* [ ] CerynixAI UI
 * [ ] Local observability and diagnostics tools
 * [ ] Update agent with rollback
 * [ ] Plugin runtime v1

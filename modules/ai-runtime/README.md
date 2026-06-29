@@ -12,7 +12,7 @@ This module provides the local inference engine (`llama.cpp`), model management,
 - `src/benchmark.py`: Local benchmarking tool.
 
 ## Data Flow
-- Desktop Assistant -> Inference Manager (HTTP over UDS) -> `llama.cpp` process -> Desktop Assistant.
+- CerynixAI Desktop UI -> Inference Manager (HTTP over UDS) -> `llama.cpp` process -> CerynixAI Desktop UI.
 - Output from Inference Manager is sent to the Action Broker (Phase 3).
 
 ## Risks or Limits

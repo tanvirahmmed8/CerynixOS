@@ -1,0 +1,12 @@
+{
+  "chassis_overrides": {
+    "ThinkPad": {
+      "max_cpu_freq_pct": 90,
+      "note": "Prevent thermal throttling on thin chassis."
+    },
+    "MacBook": {
+      "swappiness_max": 40,
+      "note": "Aggressive swap wears out SSDs faster on these models."
+    }
+  }
+}
