@@ -4,7 +4,7 @@
 This milestone covers the endpoint OS experience: base system, local AI runtime, action broker, optimization engine, self-healing, local observability, plugin runtime, and premium workstation UX foundations.
 
 ## Owner Model
-* Primary owner: Person A
+* Primary owner: Tanvir
 * Work style: Independent delivery with mocked control-plane integrations
 * External dependency rule: Do not block on Milestone 2; use local stubs, fixture policies, and fake enrollment tokens where needed
 

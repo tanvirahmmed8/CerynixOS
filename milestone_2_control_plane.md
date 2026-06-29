@@ -4,7 +4,7 @@
 This milestone covers the enterprise backend and operational layer: fleet enrollment, policy distribution, device inventory, updates orchestration, audit, compliance posture, registry foundations, and support operations.
 
 ## Owner Model
-* Primary owner: Person B
+* Primary owner: Avishek
 * Work style: Independent delivery with mocked device-plane clients and synthetic device data
 * External dependency rule: Do not block on Milestone 1; use emulator agents, fake health reports, and fixture audit events
 
