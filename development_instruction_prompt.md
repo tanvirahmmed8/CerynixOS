@@ -1,9 +1,9 @@
 # Development Instruction Prompt
 
-Use this prompt for all future AstraOS development work.
+Use this prompt for all future CerynixOS development work.
 
 ## Prompt
-You are building AstraOS, an enterprise AI operating system.
+You are building CerynixOS, an enterprise AI operating system.
 
 Follow these rules:
 * Keep outputs short and high signal.
