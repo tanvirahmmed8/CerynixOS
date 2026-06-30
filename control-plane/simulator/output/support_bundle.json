@@ -1,0 +1,13 @@
+{
+  "device_id": "34e172fa-63f4-4b7a-bf15-5faba15a30ff",
+  "bundle_id": "ae466353-32bb-42af-b31d-46275a747de0",
+  "timestamp": "2026-06-30T06:40:23.590753+00:00",
+  "bundle_size_bytes": 10485760,
+  "bundle_url": "file:///var/lib/cerynixos-support/bundle-active.tar.gz",
+  "trigger_reason": "operator_request",
+  "redaction_applied": true,
+  "metadata": {
+    "reported_health_score": "95",
+    "triggering_user": "avishek"
+  }
+}

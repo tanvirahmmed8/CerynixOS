@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Support Bundle Upload Format",
+  "type": "object",
+  "required": [
+    "device_id",
+    "bundle_id",
+    "timestamp",
+    "bundle_size_bytes",
+    "bundle_url",
+    "trigger_reason"
+  ],
+  "properties": {
+    "device_id": {
+      "type": "string",
+      "description": "Unique identifier of the device uploading the bundle"
+    },
+    "bundle_id": {
+      "type": "string",
+      "description": "Unique identifier for this specific support bundle (UUID)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time when the support bundle was generated"
+    },
+    "bundle_size_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Size of the support bundle archive in bytes"
+    },
+    "bundle_url": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "URL or local storage path to access/download the support bundle"
+    },
+    "trigger_reason": {
+      "type": "string",
+      "description": "Why the bundle was generated (e.g., 'service_crash', 'operator_request', 'periodic_check')"
+    },
+    "redaction_applied": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether telemetry and logs have been run through the local privacy redaction pipeline"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional key-value pairs with extra diagnostic context"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "device_id": "34e172fa-63f4-4b7a-bf15-5faba15a30ff",
+  "device_model": "ThinkPad P1 Gen 6",
+  "os_version": "cerynixos-gen-42",
+  "hardware_profile": {
+    "cpu_cores": 14,
+    "memory_bytes": 34359738368,
+    "storage_bytes": 1099511627776
+  },
+  "installed_capabilities": [
+    "cerynix-base",
+    "cerynix-ai-runtime",
+    "cerynix-action-broker",
+    "cerynix-health-agent",
+    "cerynix-optimizer",
+    "cerynix-healer"
+  ],
+  "enrollment_state": "active",
+  "tags": [
+    "developer",
+    "milestone-2-pilot"
+  ],
+  "group_id": "grp_dev_workstations"
+}

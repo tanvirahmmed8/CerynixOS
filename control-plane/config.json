@@ -1,0 +1,7 @@
+{
+  "host": "127.0.0.1",
+  "port": 8000,
+  "db_path": "control-plane/db/control_plane.db",
+  "api_token": "token_cerynix_secret_key_2026",
+  "log_level": "INFO"
+}

@@ -1,0 +1,5 @@
+{
+  "token": "tok_cerynix_enroll_1a2b3c4d5e",
+  "organization_id": "org_enterprise_alpha",
+  "endpoint": "https://control-plane.cerynix.internal/api/v1/enroll"
+}

@@ -1,0 +1,11 @@
+{
+  "device_id": "34e172fa-63f4-4b7a-bf15-5faba15a30ff",
+  "timestamp": "2026-06-30T06:40:23.590698+00:00",
+  "health_score": 95,
+  "components": {
+    "cpu": "healthy",
+    "memory": "healthy",
+    "storage": "healthy",
+    "services": "healthy"
+  }
+}

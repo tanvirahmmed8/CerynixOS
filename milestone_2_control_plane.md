@@ -22,69 +22,69 @@ This milestone covers the enterprise backend and operational layer: fleet enroll
 ---
 
 ## Phase 0: Milestone Setup and Contracts
-* [ ] Define Milestone 2 scope boundaries and non-goals
-* [ ] Review Milestone 1 tech_debt.md to map required backend APIs
-* [ ] Create control-plane architecture diagram
-* [ ] Define service boundary map for backend components
-* [ ] Freeze v1 API contracts for:
-* [ ] Enrollment
-* [ ] Device inventory
-* [ ] Policy distribution
-* [ ] Health ingestion
-* [ ] Audit ingestion
-* [ ] Update metadata publishing
-* [ ] Support bundle registration
-* [ ] Create mock device simulator and synthetic data generator
-* [ ] Define local development topology for all backend services
-* [ ] Establish repo conventions for backend modules, schemas, and API versioning
+* [x] Define Milestone 2 scope boundaries and non-goals
+* [x] Review Milestone 1 tech_debt.md to map required backend APIs
+* [x] Create control-plane architecture diagram
+* [x] Define service boundary map for backend components
+* [x] Freeze v1 API contracts for:
+* [x] Enrollment
+* [x] Device inventory
+* [x] Policy distribution
+* [x] Health ingestion
+* [x] Audit ingestion
+* [x] Update metadata publishing
+* [x] Support bundle registration
+* [x] Create mock device simulator and synthetic data generator
+* [x] Define local development topology for all backend services
+* [x] Establish repo conventions for backend modules, schemas, and API versioning
 
 ## Phase 1: Core Backend Foundation
-* [ ] Select service architecture pattern for v1 backend
-* [ ] Set up backend project structure
-* [ ] Set up configuration and secret management approach
-* [ ] Set up local database stack
-* [ ] Set up queue or async job processing pattern if needed
-* [ ] Add API gateway or edge routing foundation
-* [ ] Add auth middleware scaffolding
-* [ ] Add structured logging and trace correlation
-* [ ] Add health checks and readiness endpoints
-* [ ] Add migration workflow and seed data tooling
+* [x] Select service architecture pattern for v1 backend
+* [x] Set up backend project structure
+* [x] Set up configuration and secret management approach
+* [x] Set up local database stack
+* [x] Set up queue or async job processing pattern if needed
+* [x] Add API gateway or edge routing foundation
+* [x] Add auth middleware scaffolding
+* [x] Add structured logging and trace correlation
+* [x] Add health checks and readiness endpoints
+* [x] Add migration workflow and seed data tooling
 
 ## Phase 2: Fleet Enrollment and Device Inventory
-* [ ] Design enrollment flow for first enterprise pilot
-* [ ] Implement enrollment token issuance
-* [ ] Implement device registration endpoint
-* [ ] Implement device identity record model
-* [ ] Implement inventory attributes:
-* [ ] Device model
-* [ ] OS version
-* [ ] Hardware profile
-* [ ] Installed capabilities
-* [ ] Enrollment state
-* [ ] Implement device grouping and tagging
-* [ ] Implement device search and filtering
-* [ ] Build simulated fleet seeding tools
-* [ ] Validate fleet lifecycle transitions:
-* [ ] Enrolled
-* [ ] Active
-* [ ] Quarantined
-* [ ] Retired
+* [x] Design enrollment flow for first enterprise pilot
+* [x] Implement enrollment token issuance
+* [x] Implement device registration endpoint
+* [x] Implement device identity record model
+* [x] Implement inventory attributes:
+* [x] Device model
+* [x] OS version
+* [x] Hardware profile
+* [x] Installed capabilities
+* [x] Enrollment state
+* [x] Implement device grouping and tagging
+* [x] Implement device search and filtering
+* [x] Build simulated fleet seeding tools
+* [x] Validate fleet lifecycle transitions:
+* [x] Enrolled
+* [x] Active
+* [x] Quarantined
+* [x] Retired
 
 ## Phase 3: Policy Engine and Configuration Delivery
-* [ ] Define policy object schema
-* [ ] Define policy precedence rules
-* [ ] Define policy scopes:
-* [ ] Global
-* [ ] Group
-* [ ] Device
-* [ ] Implement policy CRUD APIs
-* [ ] Implement policy versioning
-* [ ] Implement policy publication workflow
-* [ ] Implement device policy resolution endpoint
-* [ ] Add policy dry-run and validation mode
-* [ ] Add policy rollback support
-* [ ] Add policy audit trail
-* [ ] Create fixture policies for mocked device testing
+* [x] Define policy object schema
+* [x] Define policy precedence rules
+* [x] Define policy scopes:
+* [x] Global
+* [x] Group
+* [x] Device
+* [x] Implement policy CRUD APIs
+* [x] Implement policy versioning
+* [x] Implement policy publication workflow
+* [x] Implement device policy resolution endpoint
+* [x] Add policy dry-run and validation mode
+* [x] Add policy rollback support
+* [x] Add policy audit trail
+* [x] Create fixture policies for mocked device testing
 
 ## Phase 4: Update Orchestration and Release Channels
 * [ ] Define release channel model:
