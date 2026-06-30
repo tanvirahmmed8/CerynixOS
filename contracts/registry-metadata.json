@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Registry Artifact Metadata Upload Format",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "name",
+    "type",
+    "version",
+    "filename",
+    "file_size_bytes",
+    "checksum_sha256",
+    "download_url",
+    "signature"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "description": "Unique identifier for the registered artifact (UUID or structured name)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the artifact/model/plugin"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["system", "model", "plugin"],
+      "description": "The category of the registry artifact"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$",
+      "description": "Semantic version of the artifact release"
+    },
+    "description": {
+      "type": "string",
+      "description": "Contextual description of changes, parameters, or compatibility requirements"
+    },
+    "filename": {
+      "type": "string",
+      "description": "File basename of the target artifact package (e.g. model.gguf, core.tar.gz)"
+    },
+    "file_size_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "File size in bytes"
+    },
+    "checksum_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "SHA-256 integrity hash value of the artifact file binary"
+    },
+    "download_url": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "Target download path or repository storage reference"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature verifying that this metadata was signed by a trusted developer certificate"
+    }
+  }
+}

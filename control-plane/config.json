@@ -3,5 +3,7 @@
   "port": 8000,
   "db_path": "control-plane/db/control_plane.db",
   "api_token": "token_cerynix_secret_key_2026",
-  "log_level": "INFO"
+  "log_level": "INFO",
+  "audit_retention_days": 90,
+  "audit_redact_fields": ["password", "secret", "token", "key"]
 }

@@ -54,6 +54,20 @@ class TestControlPlaneAPI(unittest.TestCase):
             except:
                 pass
 
+    def setUp(self):
+        # Clear out tables between tests to ensure test isolation
+        with get_db_connection() as conn:
+            conn.execute("DELETE FROM audit_events;")
+            conn.execute("DELETE FROM campaign_targets;")
+            conn.execute("DELETE FROM campaigns;")
+            conn.execute("DELETE FROM releases;")
+            conn.execute("DELETE FROM policy_assignments;")
+            conn.execute("DELETE FROM policy_revisions;")
+            conn.execute("DELETE FROM policies;")
+            conn.execute("DELETE FROM devices;")
+            conn.execute("DELETE FROM enrollment_tokens;")
+            conn.execute("DELETE FROM device_groups;")
+
     def test_database_initialization(self):
         """Verify that the SQLite database and all 11 tables are initialized on server start."""
         self.assertTrue(os.path.exists(self.test_db))
@@ -330,6 +344,399 @@ class TestControlPlaneAPI(unittest.TestCase):
         self.assertEqual(res_roll.status_code, 200)
         self.assertEqual(res_roll.json()["version"], 3)  # Re-applied as version 3
         self.assertEqual(res_roll.json()["rules"]["allowed_tools"], ["systemctl status", "reboot"])
+
+    def test_update_orchestration_campaigns(self):
+        """Verify release registration, update campaigns, staged rollouts, status progress reporting, pausing, rollbacks, and compliance dashboard metrics."""
+        headers = {"Authorization": "Bearer token_cerynix_secret_key_2026"}
+
+        # 1. Register Release
+        release_id = "rel_test_gen_50"
+        payload_rel = {
+            "release_id": release_id,
+            "version": "cerynixos-gen-50",
+            "channel": "pilot",
+            "image_url": "https://images.cerynix.internal/releases/gen-50.raw",
+            "sha256_hash": "abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+            "force_rollback": False
+        }
+        res_rel = requests.post("http://127.0.0.1:8080/api/v1/updates/releases", json=payload_rel, headers=headers)
+        self.assertEqual(res_rel.status_code, 201)
+        self.assertEqual(res_rel.json()["release_id"], release_id)
+
+        # 2. Setup Device/Group Targets
+        group_id = "grp_update_test"
+        requests.post("http://127.0.0.1:8080/api/v1/device-groups", json={"group_id": group_id, "name": "Update Test Group", "release_channel": "pilot"}, headers=headers)
+
+        res_t = requests.post("http://127.0.0.1:8080/api/v1/enrollment-tokens", json={"organization_id": "org_test", "max_uses": 5}, headers=headers)
+        token = res_t.json()["token"]
+        
+        device_id = "dev-update-test-device"
+        enroll_payload = {
+            "enrollment_token": token,
+            "device_id": device_id,
+            "device_model": "ThinkStation P620",
+            "os_version": "cerynixos-gen-42",
+            "hardware_profile": {"cpu_cores": 16, "memory_bytes": 1024, "storage_bytes": 1024},
+            "installed_capabilities": ["cerynix-base"]
+        }
+        requests.post("http://127.0.0.1:8080/api/v1/enroll", json=enroll_payload)
+        requests.patch(f"http://127.0.0.1:8080/api/v1/devices/{device_id}", json={"group_id": group_id}, headers=headers)
+        # Verify enrollment is active
+        requests.patch(f"http://127.0.0.1:8080/api/v1/devices/{device_id}", json={"enrollment_state": "active"}, headers=headers)
+
+        # 3. Create Campaign
+        campaign_id = "camp_test_rollout"
+        payload_camp = {
+            "campaign_id": campaign_id,
+            "release_id": release_id,
+            "name": "Pilot Rollout for Gen 50 100%",
+            "target_group_ids": [group_id],
+            "rollout_percentage": 100
+        }
+        res_camp = requests.post("http://127.0.0.1:8080/api/v1/updates/campaigns", json=payload_camp, headers=headers)
+        self.assertEqual(res_camp.status_code, 201)
+        self.assertEqual(res_camp.json()["campaign_id"], campaign_id)
+
+        # 4. Device Update Check
+        res_check = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/updates/check")
+        self.assertEqual(res_check.status_code, 200)
+        self.assertTrue(res_check.json()["update_available"])
+        self.assertEqual(res_check.json()["version"], "cerynixos-gen-50")
+        self.assertEqual(res_check.json()["force_rollback"], False)
+
+        # 5. Staged Rollout percentage check (rollout_percentage = 0 should block check)
+        campaign_id_0 = "camp_staged_rollout_0"
+        payload_camp_0 = {
+            "campaign_id": campaign_id_0,
+            "release_id": release_id,
+            "name": "Staged rollout 0%",
+            "target_group_ids": [group_id],
+            "rollout_percentage": 0
+        }
+        requests.post("http://127.0.0.1:8080/api/v1/updates/campaigns", json=payload_camp_0, headers=headers)
+        
+        # Pause the first campaign so the 0% one gets evaluated
+        requests.post(f"http://127.0.0.1:8080/api/v1/updates/campaigns/{campaign_id}/pause", headers=headers)
+        
+        res_check_gated = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/updates/check")
+        self.assertEqual(res_check_gated.status_code, 200)
+        self.assertFalse(res_check_gated.json()["update_available"])
+        message = res_check_gated.json().get("message", "")
+        self.assertTrue("gated" in message or "not selected" in message or "rollout" in message)
+        
+        # Resume the first campaign and pause the 0% one
+        requests.post(f"http://127.0.0.1:8080/api/v1/updates/campaigns/{campaign_id}/resume", headers=headers)
+        requests.post(f"http://127.0.0.1:8080/api/v1/updates/campaigns/{campaign_id_0}/pause", headers=headers)
+
+        # 6. Status Progress Reporting
+        res_report1 = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/updates/status", json={"campaign_id": campaign_id, "status": "applying"})
+        self.assertEqual(res_report1.status_code, 200)
+        self.assertEqual(res_report1.json()["target"]["status"], "applying")
+
+        # Report Verified (Success) -> should trigger device os_version promotion
+        res_report2 = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/updates/status", json={"campaign_id": campaign_id, "status": "verified"})
+        self.assertEqual(res_report2.status_code, 200)
+        self.assertEqual(res_report2.json()["target"]["status"], "verified")
+
+        # Query device and check version is now cerynixos-gen-50
+        res_dev = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}", headers=headers)
+        self.assertEqual(res_dev.json()["os_version"], "cerynixos-gen-50")
+
+        # 7. Pause & Rollback Controls
+        # Set a rollback directive on the campaign
+        res_rb = requests.post(f"http://127.0.0.1:8080/api/v1/updates/campaigns/{campaign_id}/rollback", headers=headers)
+        self.assertEqual(res_rb.status_code, 200)
+        self.assertEqual(res_rb.json()["status"], "rolled_back")
+
+        # Check for update after rollback -> should yield force_rollback: True
+        res_check_rb = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/updates/check")
+        self.assertEqual(res_check_rb.status_code, 200)
+        self.assertTrue(res_check_rb.json()["update_available"])
+        self.assertTrue(res_check_rb.json()["force_rollback"])
+
+        # 8. Compliance Dashboard Metrics
+        res_comp = requests.get("http://127.0.0.1:8080/api/v1/updates/compliance", headers=headers)
+        self.assertEqual(res_comp.status_code, 200)
+        self.assertIn("compliance_score", res_comp.json())
+        self.assertIn("version_breakdown", res_comp.json())
+
+    def test_audit_governance_compliance(self):
+        """Verify audit log ingestion, cryptographic validation check, posture aggregation, and reports evidence exports."""
+        headers = {"Authorization": "Bearer token_cerynix_secret_key_2026"}
+
+        # Enroll a device to register its identity
+        res_t = requests.post("http://127.0.0.1:8080/api/v1/enrollment-tokens", json={"organization_id": "org_test", "max_uses": 5}, headers=headers)
+        token = res_t.json()["token"]
+        
+        device_id = "dev-gov-test-device"
+        enroll_payload = {
+            "enrollment_token": token,
+            "device_id": device_id,
+            "device_model": "System76 Oryx Pro",
+            "os_version": "cerynixos-gen-42",
+            "hardware_profile": {"cpu_cores": 8, "memory_bytes": 1024, "storage_bytes": 1024},
+            "installed_capabilities": ["cerynix-base"]
+        }
+        requests.post("http://127.0.0.1:8080/api/v1/enroll", json=enroll_payload)
+        requests.patch(f"http://127.0.0.1:8080/api/v1/devices/{device_id}", json={"enrollment_state": "active"}, headers=headers)
+
+        # 1. Audit Ingestion
+        payload_audit = {
+            "event_id": "evt_test_ingest_1",
+            "timestamp": "2026-06-30T12:00:00Z",
+            "service": "execution_broker",
+            "action": "ran_tool",
+            "status": "success",
+            "details": {"command": "systemctl restart cerynix"}
+        }
+        res_ingest = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/audit/ingest", json=payload_audit)
+        self.assertEqual(res_ingest.status_code, 201)
+        self.assertEqual(res_ingest.json()["event_id"], "evt_test_ingest_1")
+        self.assertIn("tamper_hash", res_ingest.json())
+
+        # Ingest a second event to form a chain link
+        payload_audit_2 = {
+            "event_id": "evt_test_ingest_2",
+            "timestamp": "2026-06-30T12:01:00Z",
+            "service": "execution_broker",
+            "action": "ran_tool",
+            "status": "denied_by_policy",
+            "details": {"command": "rm -rf /"}
+        }
+        res_ingest_2 = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/audit/ingest", json=payload_audit_2)
+        self.assertEqual(res_ingest_2.status_code, 201)
+        self.assertEqual(res_ingest_2.json()["previous_hash"], res_ingest.json()["tamper_hash"])
+
+        # 2. Cryptographic Validation Chain
+        res_verify = requests.post("http://127.0.0.1:8080/api/v1/audit/verify", headers=headers)
+        self.assertEqual(res_verify.status_code, 200)
+        self.assertEqual(res_verify.json()["status"], "valid")
+
+        # 3. Simulate Tampering check by manually altering the DB record
+        with get_db_connection() as conn:
+            conn.execute("UPDATE audit_events SET action = 'hacked_action' WHERE event_id = 'evt_test_ingest_1';")
+
+        # Chain verification should now report tampered/broken chain
+        res_verify_tampered = requests.post("http://127.0.0.1:8080/api/v1/audit/verify", headers=headers)
+        self.assertEqual(res_verify_tampered.status_code, 200)
+        self.assertEqual(res_verify_tampered.json()["status"], "tampered")
+
+        # 4. Compliance Posture Summaries
+        res_posture = requests.get("http://127.0.0.1:8080/api/v1/compliance/posture", headers=headers)
+        self.assertEqual(res_posture.status_code, 200)
+        self.assertIn("compliance_score", res_posture.json())
+        self.assertIn("non_compliant_count", res_posture.json())
+
+        # 5. Export Evidence
+        for report in ["inventory", "updates", "policies", "audit"]:
+            res_exp = requests.get(f"http://127.0.0.1:8080/api/v1/compliance/export/{report}", headers=headers)
+            self.assertEqual(res_exp.status_code, 200)
+            self.assertTrue(isinstance(res_exp.json(), list))
+
+    def test_observability_health_diagnostics(self):
+        """Verify health snapshots ingestion, fleet status overview, active alert rules evaluation, support bundles, incidents CRUD, and Remote diagnostics commands execution."""
+        headers = {"Authorization": "Bearer token_cerynix_secret_key_2026"}
+
+        # Enroll a device
+        res_t = requests.post("http://127.0.0.1:8080/api/v1/enrollment-tokens", json={"organization_id": "org_test", "max_uses": 5}, headers=headers)
+        token = res_t.json()["token"]
+        
+        device_id = "dev-obs-test-device"
+        enroll_payload = {
+            "enrollment_token": token,
+            "device_id": device_id,
+            "device_model": "Framework Laptop 16",
+            "os_version": "cerynixos-gen-42",
+            "hardware_profile": {"cpu_cores": 8, "memory_bytes": 1024, "storage_bytes": 1024},
+            "installed_capabilities": ["cerynix-base"]
+        }
+        requests.post("http://127.0.0.1:8080/api/v1/enroll", json=enroll_payload)
+        requests.patch(f"http://127.0.0.1:8080/api/v1/devices/{device_id}", json={"enrollment_state": "active"}, headers=headers)
+
+        # 1. Ingest health snapshot
+        payload_health = {
+            "snapshot_id": "snap_test_1",
+            "timestamp": "2026-06-30T05:00:00Z",
+            "health_score": 85,
+            "components": {
+                "cpu": "healthy",
+                "memory": "healthy",
+                "storage": "healthy",
+                "services": "degraded"
+            }
+        }
+        res_health = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/health/ingest", json=payload_health)
+        self.assertEqual(res_health.status_code, 201)
+        self.assertEqual(res_health.json()["health_score"], 85)
+
+        # 2. Fleet health overview
+        res_fleet = requests.get("http://127.0.0.1:8080/api/v1/observability/fleet", headers=headers)
+        self.assertEqual(res_fleet.status_code, 200)
+        self.assertEqual(res_fleet.json()["total_active_devices"], 1)
+        self.assertEqual(res_fleet.json()["healthy_count"], 1)
+
+        # 3. Dynamic alerts
+        res_alerts = requests.get("http://127.0.0.1:8080/api/v1/observability/alerts", headers=headers)
+        self.assertEqual(res_alerts.status_code, 200)
+        alerts = res_alerts.json()
+        # Should contain degraded alert for services
+        alert_types = [a["alert_type"] for a in alerts]
+        self.assertIn("resource_services_degraded", alert_types)
+
+        # 4. Ingest support bundle metadata
+        payload_bundle = {
+            "bundle_id": "bundle-uuid-1234",
+            "timestamp": "2026-06-30T13:10:00Z",
+            "bundle_size_bytes": 50000,
+            "bundle_url": "https://storage.cerynix.internal/bundles/framework-1234.tar.gz",
+            "trigger_reason": "operator_request",
+            "redaction_applied": True,
+            "metadata": {"kernel": "6.1.0-nix"}
+        }
+        res_bundle = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/support-bundles", json=payload_bundle)
+        self.assertEqual(res_bundle.status_code, 201)
+        self.assertEqual(res_bundle.json()["bundle_id"], "bundle-uuid-1234")
+
+        # 5. Incident CRUD
+        incident_id = "inc_test_1"
+        payload_inc = {
+            "incident_id": incident_id,
+            "device_id": device_id,
+            "title": "Services degraded alert ticket",
+            "description": "System services reported degraded on diagnostics snapshot.",
+            "severity": "high"
+        }
+        res_inc = requests.post("http://127.0.0.1:8080/api/v1/support/incidents", json=payload_inc, headers=headers)
+        self.assertEqual(res_inc.status_code, 201)
+        self.assertEqual(res_inc.json()["status"], "open")
+
+        # Update note
+        res_inc_up = requests.patch(
+            f"http://127.0.0.1:8080/api/v1/support/incidents/{incident_id}", 
+            json={"status": "investigating", "operator_note": "Assigned to engineer."}, 
+            headers=headers
+        )
+        self.assertEqual(res_inc_up.status_code, 200)
+        self.assertEqual(res_inc_up.json()["status"], "investigating")
+        self.assertEqual(len(res_inc_up.json()["operator_notes"]), 1)
+
+        # 6. Diagnostics Remote Execution Pipeline
+        command_id = "cmd_diag_1"
+        payload_exec = {
+            "command_id": command_id,
+            "command": "systemctl status cerynix-base",
+            "arguments": ["--no-pager"]
+        }
+        res_exec = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/diagnostics/execute", json=payload_exec, headers=headers)
+        self.assertEqual(res_exec.status_code, 201)
+        self.assertEqual(res_exec.json()["status"], "pending")
+
+        # Poll pending command from device side
+        res_poll = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/diagnostics/pending")
+        self.assertEqual(res_poll.status_code, 200)
+        self.assertEqual(res_poll.json()["command_id"], command_id)
+        self.assertEqual(res_poll.json()["status"], "running")
+
+        # Submit execution results
+        res_results = requests.post(
+            f"http://127.0.0.1:8080/api/v1/devices/{device_id}/diagnostics/results", 
+            json={"command_id": command_id, "status": "completed", "output": "cerynix-base.service is running"}
+        )
+        self.assertEqual(res_results.status_code, 200)
+        self.assertEqual(res_results.json()["status"], "completed")
+        self.assertEqual(res_results.json()["output"], "cerynix-base.service is running")
+
+        # Get diagnostic commands history
+        res_history = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/diagnostics/commands", headers=headers)
+        self.assertEqual(res_history.status_code, 200)
+        self.assertEqual(len(res_history.json()), 1)
+
+        # 7. Device Timeline View
+        res_time = requests.get(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/timeline", headers=headers)
+        self.assertEqual(res_time.status_code, 200)
+        self.assertTrue(len(res_time.json()) > 0)
+        
+        # 8. Synthetic Failure Simulation
+        res_sim = requests.post(f"http://127.0.0.1:8080/api/v1/devices/{device_id}/simulate-failure", json={"failure_type": "cpu_spike"}, headers=headers)
+        self.assertEqual(res_sim.status_code, 200)
+        self.assertEqual(res_sim.json()["cpu"], "critical")
+        self.assertEqual(res_sim.json()["health_score"], 45)
+
+        # 9. Unhealthy Device Workflow queue filter
+        res_unhealthy = requests.get("http://127.0.0.1:8080/api/v1/support/unhealthy", headers=headers)
+        self.assertEqual(res_unhealthy.status_code, 200)
+        self.assertTrue(len(res_unhealthy.json()) > 0)
+
+    def test_artifact_registry(self):
+        """Verify artifact metadata upload registration, catalog listing, version approvals, and secure download URL signing calculations."""
+        headers = {"Authorization": "Bearer token_cerynix_secret_key_2026"}
+
+        # 1. Register artifact metadata (starts as pending)
+        payload_art_bad = {
+            "artifact_id": "plugin-test-plugin-bad",
+            "name": "cerynix-plugin-test",
+            "type": "plugin",
+            "version": "1.2.3",
+            "filename": "plugin-test.tar.gz",
+            "file_size_bytes": 15000,
+            "checksum_sha256": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f61234",
+            "download_url": "https://storage.cerynix.internal/registry/plugins/plugin-test.tar.gz",
+            "signature": "invalid_sig_format"
+        }
+        res_reg_bad = requests.post("http://127.0.0.1:8080/api/v1/registry/artifacts", json=payload_art_bad, headers=headers)
+        self.assertEqual(res_reg_bad.status_code, 400)
+
+        payload_art = {
+            "artifact_id": "plugin-test-plugin",
+            "name": "cerynix-plugin-test",
+            "type": "plugin",
+            "version": "1.2.3",
+            "description": "Integration test plugin payload.",
+            "filename": "plugin-test.tar.gz",
+            "file_size_bytes": 15000,
+            "checksum_sha256": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f61234",
+            "download_url": "https://storage.cerynix.internal/registry/plugins/plugin-test.tar.gz",
+            "signature": "dev_signature_test_2026"
+        }
+        res_reg = requests.post("http://127.0.0.1:8080/api/v1/registry/artifacts", json=payload_art, headers=headers)
+        self.assertEqual(res_reg.status_code, 201)
+        self.assertEqual(res_reg.json()["approval_status"], "pending")
+
+        # 2. Get catalog (should be empty because it is pending approval)
+        res_cat = requests.get("http://127.0.0.1:8080/api/v1/registry/catalog")
+        self.assertEqual(res_cat.status_code, 200)
+        self.assertEqual(len(res_cat.json()), 0)
+
+        # 3. Attempt download URL signing for unapproved artifact (should fail with 403)
+        res_dl_fail = requests.get("http://127.0.0.1:8080/api/v1/registry/artifacts/plugin-test-plugin/download")
+        self.assertEqual(res_dl_fail.status_code, 403)
+
+        # 4. Approve version catalog promotion
+        res_app = requests.patch("http://127.0.0.1:8080/api/v1/registry/artifacts/plugin-test-plugin/approve", json={"status": "approved"}, headers=headers)
+        self.assertEqual(res_app.status_code, 200)
+        self.assertEqual(res_app.json()["approval_status"], "approved")
+
+        # 5. Fetch catalog (should now return 1 item)
+        res_cat_ok = requests.get("http://127.0.0.1:8080/api/v1/registry/catalog")
+        self.assertEqual(res_cat_ok.status_code, 200)
+        self.assertEqual(len(res_cat_ok.json()), 1)
+        self.assertEqual(res_cat_ok.json()[0]["artifact_id"], "plugin-test-plugin")
+
+        # 6. Retrieve signed download URL successfully (should contain signature and expires params)
+        res_dl_ok = requests.get("http://127.0.0.1:8080/api/v1/registry/artifacts/plugin-test-plugin/download?expires=300")
+        self.assertEqual(res_dl_ok.status_code, 200)
+        signed_url = res_dl_ok.json()["signed_url"]
+        self.assertIn("expires=", signed_url)
+        self.assertIn("signature=", signed_url)
+
+        # Validate signed URL manually using verify_signed_url helper
+        from services.registry import verify_signed_url
+        import urllib.parse
+        parsed = urllib.parse.urlparse(signed_url)
+        params = urllib.parse.parse_qs(parsed.query)
+        expires_val = int(params["expires"][0])
+        sig_val = params["signature"][0]
+        self.assertTrue(verify_signed_url("plugin-test-plugin", expires_val, sig_val))
 
 if __name__ == "__main__":
     unittest.main()

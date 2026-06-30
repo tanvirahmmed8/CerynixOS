@@ -1,3 +1,4 @@
+import sqlite3
 from database.connection import get_db_connection
 
 TABLES = {
@@ -6,6 +7,7 @@ TABLES = {
             group_id TEXT PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             description TEXT,
+            release_channel TEXT CHECK(release_channel IN ('canary', 'pilot', 'broad', 'critical')) DEFAULT 'broad',
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
     """,
@@ -94,6 +96,8 @@ TABLES = {
             action TEXT NOT NULL,
             status TEXT NOT NULL,
             details TEXT,
+            previous_hash TEXT,
+            tamper_hash TEXT,
             FOREIGN KEY(device_id) REFERENCES devices(device_id) ON DELETE CASCADE
         );
     """,
@@ -134,6 +138,51 @@ TABLES = {
             FOREIGN KEY(policy_id) REFERENCES policies(policy_id) ON DELETE CASCADE,
             UNIQUE(policy_id, version)
         );
+    """,
+    "incidents": """
+        CREATE TABLE IF NOT EXISTS incidents (
+            incident_id TEXT PRIMARY KEY,
+            device_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            status TEXT CHECK(status IN ('open', 'resolved', 'investigating')) DEFAULT 'open',
+            severity TEXT CHECK(severity IN ('low', 'medium', 'high', 'critical')) DEFAULT 'medium',
+            operator_notes TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+        );
+    """,
+    "diagnostic_commands": """
+        CREATE TABLE IF NOT EXISTS diagnostic_commands (
+            command_id TEXT PRIMARY KEY,
+            device_id TEXT NOT NULL,
+            command TEXT NOT NULL,
+            arguments TEXT,
+            status TEXT CHECK(status IN ('pending', 'running', 'completed', 'failed')) DEFAULT 'pending',
+            output TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+        );
+    """,
+    "registry_artifacts": """
+        CREATE TABLE IF NOT EXISTS registry_artifacts (
+            artifact_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            type TEXT CHECK(type IN ('system', 'model', 'plugin')) NOT NULL,
+            version TEXT NOT NULL,
+            description TEXT,
+            filename TEXT NOT NULL,
+            file_size_bytes INTEGER NOT NULL,
+            checksum_sha256 TEXT NOT NULL,
+            download_url TEXT NOT NULL,
+            signature TEXT NOT NULL,
+            approval_status TEXT CHECK(approval_status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(type, name, version)
+        );
     """
 }
 
@@ -154,8 +203,29 @@ def init_db():
             "campaign_targets",
             "audit_events",
             "health_snapshots",
-            "support_bundles"
+            "support_bundles",
+            "incidents",
+            "diagnostic_commands",
+            "registry_artifacts"
         ]
         for name in ordered_tables:
             conn.execute(TABLES[name])
+            
+        # Run migration check for release_channel in device_groups
+        try:
+            conn.execute("ALTER TABLE device_groups ADD COLUMN release_channel TEXT CHECK(release_channel IN ('canary', 'pilot', 'broad', 'critical')) DEFAULT 'broad';")
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
+            
+        # Run migration check for previous_hash and tamper_hash in audit_events
+        try:
+            conn.execute("ALTER TABLE audit_events ADD COLUMN previous_hash TEXT;")
+        except sqlite3.OperationalError:
+            pass
+        try:
+            conn.execute("ALTER TABLE audit_events ADD COLUMN tamper_hash TEXT;")
+        except sqlite3.OperationalError:
+            pass
+            
     print("Database initialization completed successfully.")

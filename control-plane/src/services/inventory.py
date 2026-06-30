@@ -91,6 +91,7 @@ def list_devices(
     filter_state: str = None,
     filter_group: str = None,
     filter_tag: str = None,
+    filter_channel: str = None,
     query_text: str = None
 ) -> list:
     """Lists devices matching filter criteria."""
@@ -104,6 +105,10 @@ def list_devices(
     if filter_group:
         query += " AND group_id = ?"
         params.append(filter_group)
+
+    if filter_channel:
+        query += " AND release_channel = ?"
+        params.append(filter_channel)
         
     with get_db_connection() as conn:
         cursor = conn.execute(query, params)

@@ -87,80 +87,80 @@ This milestone covers the enterprise backend and operational layer: fleet enroll
 * [x] Create fixture policies for mocked device testing
 
 ## Phase 4: Update Orchestration and Release Channels
-* [ ] Define release channel model:
-* [ ] Canary
-* [ ] Pilot
-* [ ] Broad
-* [ ] Critical
-* [ ] Define update metadata schema
-* [ ] Implement release record management
-* [ ] Implement update assignment rules by group/channel
-* [ ] Implement staged rollout controls
-* [ ] Implement pause and rollback controls
-* [ ] Implement update campaign status tracking
-* [ ] Add update compliance dashboard data model
-* [ ] Test campaigns using simulated device clients
+* [x] Define release channel model:
+* [x] Canary
+* [x] Pilot
+* [x] Broad
+* [x] Critical
+* [x] Define update metadata schema
+* [x] Implement release record management
+* [x] Implement update assignment rules by group/channel
+* [x] Implement staged rollout controls
+* [x] Implement pause and rollback controls
+* [x] Implement update campaign status tracking
+* [x] Add update compliance dashboard data model
+* [x] Test campaigns using simulated device clients
 
 ## Phase 5: Audit, Compliance, and Governance
-* [ ] Define audit event taxonomy
-* [ ] Implement audit ingestion endpoint
-* [ ] Implement tamper-evident audit storage approach
-* [ ] Implement privileged action reporting views
-* [ ] Define compliance baseline controls for pilot
-* [ ] Implement compliance posture aggregation
-* [ ] Implement evidence export for:
-* [ ] Device inventory
-* [ ] Update status
-* [ ] Policy state
-* [ ] Audit history
-* [ ] Add redaction and retention configuration
-* [ ] Write governance notes for enterprise review
+* [x] Define audit event taxonomy
+* [x] Implement audit ingestion endpoint
+* [x] Implement tamper-evident audit storage approach
+* [x] Implement privileged action reporting views
+* [x] Define compliance baseline controls for pilot
+* [x] Implement compliance posture aggregation
+* [x] Implement evidence export for:
+* [x] Device inventory
+* [x] Update status
+* [x] Policy state
+* [x] Audit history
+* [x] Add redaction and retention configuration
+* [x] Write governance notes for enterprise review
 
 ## Phase 6: Observability, Health, and Support Operations
-* [ ] Define health report schema
-* [ ] Implement health ingestion endpoint
-* [ ] Implement per-device health scoring
-* [ ] Implement fleet health overview
-* [ ] Implement alert rules for pilot scale
-* [ ] Implement support bundle registration and retrieval metadata
-* [ ] Implement device timeline view
-* [ ] Implement incident notes or operator annotation support
-* [ ] Add support workflow filters for unhealthy devices
-* [ ] Add synthetic failure scenarios for operational testing
+* [x] Define health report schema
+* [x] Implement health ingestion endpoint
+* [x] Implement per-device health scoring
+* [x] Implement fleet health overview
+* [x] Implement alert rules for pilot scale
+* [x] Implement support bundle registration and retrieval metadata
+* [x] Implement device timeline view
+* [x] Implement incident notes or operator annotation support
+* [x] Add support workflow filters for unhealthy devices
+* [x] Add synthetic failure scenarios for operational testing
 
 ## Phase 7: Artifact, Model, and Plugin Registry Foundations
-* [ ] Define registry scope for system artifacts, models, and plugins
-* [ ] Define artifact metadata schema
-* [ ] Implement signed artifact metadata storage
-* [ ] Implement approved version catalog
-* [ ] Implement artifact publishing workflow
-* [ ] Implement artifact deprecation workflow
-* [ ] Implement registry lookup API
-* [ ] Add placeholder signature verification workflow
-* [ ] Seed registry with fake and test artifacts for integration
+* [x] Define registry scope for system artifacts, models, and plugins
+* [x] Define artifact metadata schema
+* [x] Implement signed artifact metadata storage
+* [x] Implement approved version catalog
+* [x] Implement artifact publishing workflow
+* [x] Implement artifact deprecation workflow
+* [x] Implement registry lookup API
+* [x] Add placeholder signature verification workflow
+* [x] Seed registry with fake and test artifacts for integration
 
 ## Phase 8: Admin Experience and Enterprise UX
-* [ ] Define primary operator personas
-* [ ] Design admin information architecture
-* [ ] Build admin dashboard shell
-* [ ] Build device inventory screens
-* [ ] Build policy management screens
-* [ ] Build update campaign screens
-* [ ] Build audit and compliance views
-* [ ] Build support diagnostics views
-* [ ] Add role-aware UI gating placeholders
-* [ ] Validate UI against core pilot workflows
+* [x] Define primary operator personas
+* [x] Design admin information architecture
+* [x] Build admin dashboard shell
+* [x] Build device inventory screens
+* [x] Build policy management screens
+* [x] Build update campaign screens
+* [x] Build audit and compliance views
+* [x] Build support diagnostics views
+* [x] Add role-aware UI gating placeholders
+* [x] Validate UI against core pilot workflows
 
 ## Phase 9: Security and Identity Foundations
-* [ ] Define admin auth strategy for v1
-* [ ] Add role-based access control foundation
-* [ ] Define service-to-service auth pattern
-* [ ] Add secret rotation procedure
-* [ ] Define device certificate lifecycle placeholder model
-* [ ] Add backend hardening checklist
-* [ ] Add security event logging
-* [ ] Review exposed endpoints for abuse and over-permission
-* [ ] Document future SSO and TPM-backed identity extension path
+* [x] Define admin auth strategy for v1
+* [x] Add role-based access control foundation
+* [x] Define service-to-service auth pattern
+* [x] Add secret rotation procedure
+* [x] Define device certificate lifecycle placeholder model
+* [x] Add backend hardening checklist
+* [x] Add security event logging
+* [x] Review exposed endpoints for abuse and over-permission
+* [x] Document future SSO and TPM-backed identity extension path
 
 ## Phase 10: SRE, Release Operations, and Pilot Readiness
 * [ ] Define SLOs for critical backend services

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CerynixOS Fleet Control Console</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Auth Gating Token Modal -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-card glassmorphic">
+            <div class="brand-header">
+                <span class="brand-logo">▲</span>
+                <h2>CerynixOS Console</h2>
+            </div>
+            <p>Accessing the pilot fleet requires security validation. Please enter your operator access token.</p>
+            <div class="form-group">
+                <label for="token-input">Bearer Authentication Token</label>
+                <input type="password" id="token-input" placeholder="token_cerynix_secret_key_..." value="token_cerynix_secret_key_2026">
+            </div>
+            <button id="auth-btn" class="btn-primary">Verify Identity</button>
+            <div id="auth-error" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- Main Console Container -->
+    <div id="console-layout" class="layout-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glassmorphic">
+            <div class="sidebar-brand">
+                <span class="logo-icon">▲</span>
+                <div class="logo-text">
+                    <h1>CerynixOS</h1>
+                    <span>CONTROL PLANE</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="overview">
+                    <span class="icon">📊</span> Overview
+                </a>
+                <a href="#" class="nav-item" data-tab="inventory">
+                    <span class="icon">🖥️</span> Device Inventory
+                </a>
+                <a href="#" class="nav-item" data-tab="policies">
+                    <span class="icon">🛡️</span> Policies & Rules
+                </a>
+                <a href="#" class="nav-item" data-tab="updates">
+                    <span class="icon">🔄</span> Update Campaigns
+                </a>
+                <a href="#" class="nav-item" data-tab="governance">
+                    <span class="icon">⚖️</span> Governance & Audits
+                </a>
+                <a href="#" class="nav-item" data-tab="diagnostics">
+                    <span class="icon">🩺</span> Diagnostics & Incidents
+                </a>
+                <a href="#" class="nav-item" data-tab="simulators">
+                    <span class="icon">🧪</span> Failure Simulators
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">⚙️</div>
+                    <div class="user-info">
+                        <span id="role-badge" class="badge-role">Operator</span>
+                        <span class="user-org">Pilot Org</span>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn-text">Disconnect</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-viewport">
+            
+            <!-- Top Dashboard Header -->
+            <header class="app-header glassmorphic">
+                <div class="header-left">
+                    <h2 id="page-title">Overview Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="status-indicator">
+                        <span class="pulse-green"></span>
+                        <span class="status-label">Control Plane: Healthy</span>
+                    </div>
+                    <div class="alerts-pill cursor-pointer" onclick="switchTab('diagnostics')">
+                        <span class="alert-icon">🔔</span>
+                        <span id="alerts-count" class="alert-badge">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <div id="content-container">
+                
+                <!-- Tab Section: Overview -->
+                <section id="tab-overview" class="tab-pane active">
+                    <!-- Metrics Row -->
+                    <div class="metrics-grid">
+                        <div class="metric-card glassmorphic hover-scale">
+                            <span class="card-icon">🖥️</span>
+                            <h3>Fleet Active Devices</h3>
+                            <p id="metric-devices" class="metric-value">-</p>
+                            <span class="metric-sub">Registered in inventory</span>
+                        </div>
+                        <div class="metric-card glassmorphic hover-scale">
+                            <span class="card-icon">❤️</span>
+                            <h3>Average Health Score</h3>
+                            <p id="metric-health-score" class="metric-value">-</p>
+                            <span class="metric-sub">Across reporting nodes</span>
+                        </div>
+                        <div class="metric-card glassmorphic hover-scale">
+                            <span class="card-icon">🛡️</span>
+                            <h3>Non-Compliant Nodes</h3>
+                            <p id="metric-non-compliant" class="metric-value text-warning">-</p>
+                            <span class="metric-sub">Failing posture baseline</span>
+                        </div>
+                        <div class="metric-card glassmorphic hover-scale">
+                            <span class="card-icon">⚠️</span>
+                            <h3>Active System Alerts</h3>
+                            <p id="metric-active-alerts" class="metric-value text-critical">-</p>
+                            <span class="metric-sub">Requires operator triage</span>
+                        </div>
+                    </div>
+
+                    <!-- Layout splits -->
+                    <div class="dashboard-split">
+                        <!-- Left: Health State Distribution -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Fleet Health State Profile</h3>
+                            <div class="health-breakdown-row">
+                                <div class="health-breakdown-card border-green">
+                                    <h4 class="text-green">Healthy</h4>
+                                    <p id="health-pct-healthy" class="health-pct">-</p>
+                                    <span id="health-count-healthy" class="health-sub">-</span>
+                                </div>
+                                <div class="health-breakdown-card border-yellow">
+                                    <h4 class="text-yellow">Degraded</h4>
+                                    <p id="health-pct-degraded" class="health-pct">-</p>
+                                    <span id="health-count-degraded" class="health-sub">-</span>
+                                </div>
+                                <div class="health-breakdown-card border-red">
+                                    <h4 class="text-red">Critical</h4>
+                                    <p id="health-pct-critical" class="health-pct">-</p>
+                                    <span id="health-count-critical" class="health-sub">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Active Alert Rule Triggers -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Operational Alerts Queue</h3>
+                            <div id="overview-alerts-list" class="alerts-scroll-container">
+                                <div class="loading-placeholder">Loading alerts...</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Device Inventory -->
+                <section id="tab-inventory" class="tab-pane">
+                    <div class="action-bar">
+                        <div class="search-box">
+                            <input type="text" id="inventory-search" placeholder="Search by ID, model, tags...">
+                            <button id="inventory-search-btn" class="btn-secondary">Search</button>
+                        </div>
+                        <div class="filter-controls">
+                            <select id="inventory-filter-state">
+                                <option value="">All States</option>
+                                <option value="enrolled">Enrolled</option>
+                                <option value="active">Active</option>
+                                <option value="decommissioned">Decommissioned</option>
+                            </select>
+                            <select id="inventory-filter-channel">
+                                <option value="">All Channels</option>
+                                <option value="canary">Canary</option>
+                                <option value="pilot">Pilot</option>
+                                <option value="broad">Broad</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="content-block glassmorphic">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Device ID</th>
+                                    <th>Model Name</th>
+                                    <th>State</th>
+                                    <th>Version</th>
+                                    <th>Release Channel</th>
+                                    <th>Tags</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                <tr><td colspan="7" class="text-center">Loading devices...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Policies -->
+                <section id="tab-policies" class="tab-pane">
+                    <div class="dashboard-split align-start">
+                        <!-- Left side: Policies list -->
+                        <div class="content-block glassmorphic flex-1">
+                            <div class="flex-row justify-between align-center margin-bottom-20">
+                                <h3>Configuration Policies</h3>
+                                <button id="new-policy-btn" class="btn-primary-sm">+ Create Policy</button>
+                            </div>
+                            <div id="policies-list-container" class="policies-list">
+                                <div class="loading-placeholder">Loading policies...</div>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Assign policy -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Assign Policy to Targets</h3>
+                            <form id="assign-policy-form" class="standard-form">
+                                <div class="form-group">
+                                    <label for="assign-policy-id">Select Policy</label>
+                                    <select id="assign-policy-id" required>
+                                        <option value="">Choose Policy...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="assign-target-type">Target Type</label>
+                                    <select id="assign-target-type" required>
+                                        <option value="global">Global (Fleet-wide)</option>
+                                        <option value="group">Group Assignment</option>
+                                        <option value="device">Device Assignment</option>
+                                    </select>
+                                </div>
+                                <div id="assign-target-val-container" class="form-group display-none">
+                                    <label for="assign-target-val">Target Reference ID</label>
+                                    <input type="text" id="assign-target-val" placeholder="group-id or device-id">
+                                </div>
+                                <button type="submit" class="btn-primary">Apply Policy Rules</button>
+                                <div id="assign-status" class="success-msg"></div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Update Campaigns -->
+                <section id="tab-updates" class="tab-pane">
+                    <div class="dashboard-split align-start">
+                        <!-- Left side: Releases Catalog -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>OS Release Packages catalog</h3>
+                            <div id="updates-releases-container" class="releases-list">
+                                <div class="loading-placeholder">Loading releases...</div>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Create Campaign -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Deploy Update Rollout Campaign</h3>
+                            <form id="create-campaign-form" class="standard-form">
+                                <div class="form-group">
+                                    <label for="campaign-id">Campaign ID</label>
+                                    <input type="text" id="campaign-id" placeholder="camp_rollout_v42" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campaign-release">Release Version</label>
+                                    <select id="campaign-release" required>
+                                        <option value="">Select Release...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campaign-channel">Release Channel</label>
+                                    <select id="campaign-channel" required>
+                                        <option value="canary">Canary</option>
+                                        <option value="pilot">Pilot</option>
+                                        <option value="broad">Broad</option>
+                                        <option value="critical">Critical</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campaign-stages">Rollout Strategy</label>
+                                    <select id="campaign-stages" required>
+                                        <option value="immediate">Immediate Broad Rollout (1 stage)</option>
+                                        <option value="progressive">Stateless Progressive (3 stages: 10%, 35%, 100%)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-primary">Initiate Campaign</button>
+                                <div id="campaign-create-status" class="success-msg"></div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Active Rollout campaigns list -->
+                    <div class="content-block glassmorphic margin-top-20">
+                        <h3>Active Rollout Campaigns</h3>
+                        <div id="campaigns-grid-container" class="campaigns-grid">
+                            <div class="loading-placeholder">Loading update campaigns...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Governance & Compliance -->
+                <section id="tab-governance" class="tab-pane">
+                    <div class="dashboard-split align-start">
+                        <!-- Left side: Cryptographic verify ledger -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Cryptographic Audit Chain Tamper-Evidence</h3>
+                            <p>Verify that the chained log ledger is integrated, cryptographic signature chains match chronological hashes, and no unauthorized modifications exist.</p>
+                            <button id="verify-audit-btn" class="btn-primary margin-top-10">Run Cryptographic Check</button>
+                            <div id="verify-audit-result" class="verify-result-card border-none display-none">
+                                <div class="flex-row align-center justify-between">
+                                    <h4 id="verify-status-text">Status: Checking...</h4>
+                                    <span id="verify-status-indicator" class="pulse-green"></span>
+                                </div>
+                                <p id="verify-status-msg" class="margin-top-10"></p>
+                                <pre id="verify-status-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Evidence exports -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Audit Compliance Evidence Archives</h3>
+                            <p>Download signed JSON tables evidence packages mapping fleet states, release configurations, and cryptographic ledgers for compliance officers review.</p>
+                            <div class="exports-grid margin-top-20">
+                                <button onclick="triggerEvidenceExport('inventory')" class="btn-secondary">📦 Export Device Inventory</button>
+                                <button onclick="triggerEvidenceExport('updates')" class="btn-secondary">🔄 Export Update Statuses</button>
+                                <button onclick="triggerEvidenceExport('policies')" class="btn-secondary">🛡️ Export Configurations Policies</button>
+                                <button onclick="triggerEvidenceExport('audit')" class="btn-secondary">⚖️ Export Audit Ledger Logs</button>
+                            </div>
+                            <div id="export-status" class="success-msg"></div>
+                            <pre id="export-viewer" class="raw-code display-none"></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Diagnostics & Incidents -->
+                <section id="tab-diagnostics" class="tab-pane">
+                    <div class="dashboard-split align-start">
+                        <!-- Left Side: Incidents CRM -->
+                        <div class="content-block glassmorphic flex-1">
+                            <div class="flex-row justify-between align-center margin-bottom-20">
+                                <h3>Fleet Operational Incidents</h3>
+                                <button id="new-incident-btn" class="btn-primary-sm">+ Open Ticket</button>
+                            </div>
+                            <div id="incidents-list-container" class="incidents-list">
+                                <div class="loading-placeholder">Loading incidents...</div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Diagnostics Console execution terminal -->
+                        <div class="content-block glassmorphic flex-1">
+                            <h3>Remote Diagnostics Command Terminal</h3>
+                            <div class="form-group">
+                                <label for="diag-target-device">Select Device ID</label>
+                                <select id="diag-target-device" required>
+                                    <option value="">Select Reporting Device...</option>
+                                </select>
+                            </div>
+                            <div class="terminal-shell margin-top-20">
+                                <div class="terminal-header">
+                                    <span class="terminal-circle red"></span>
+                                    <span class="terminal-circle yellow"></span>
+                                    <span class="terminal-circle green"></span>
+                                    <span class="terminal-title">cerynix-diag-terminal@control-plane</span>
+                                </div>
+                                <div id="terminal-stdout" class="terminal-stdout-scroll">
+                                    Welcome to CerynixOS developer remote execution terminal.<br>
+                                    Select a device and select a command to schedule task...
+                                </div>
+                                <div class="terminal-input-bar">
+                                    <span class="terminal-prompt">$</span>
+                                    <select id="terminal-command-select" class="terminal-select">
+                                        <option value="">Select execution tool...</option>
+                                        <option value="reboot">reboot</option>
+                                        <option value="systemctl status cerynix-base">systemctl status cerynix-base</option>
+                                        <option value="journalctl -n 20">journalctl -n 20</option>
+                                        <option value="cerynix-diag --audit">cerynix-diag --audit</option>
+                                    </select>
+                                    <button id="terminal-execute-btn" class="btn-terminal">Send Task</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Bundles manifesting list -->
+                    <div class="content-block glassmorphic margin-top-20">
+                        <h3>Diagnostic Support Packages Manifests</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bundle ID</th>
+                                    <th>Device ID</th>
+                                    <th>Uploaded At</th>
+                                    <th>Size (Bytes)</th>
+                                    <th>Trigger Reason</th>
+                                    <th>Redacted</th>
+                                    <th>Download URL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="support-bundles-table-body">
+                                <tr><td colspan="7" class="text-center">Loading support packages...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tab Section: Simulators -->
+                <section id="tab-simulators" class="tab-pane">
+                    <div class="content-block glassmorphic">
+                        <h3>Operational Validation: Synthetic Failure Injector</h3>
+                        <p>Simulate hardware resource degradation and daemon failures on device nodes to validate alerting rules and helpdesk support pipelines.</p>
+                        
+                        <form id="simulate-failure-form" class="standard-form max-width-600 margin-top-20">
+                            <div class="form-group">
+                                <label for="sim-device-id">Target Device</label>
+                                <select id="sim-device-id" required>
+                                    <option value="">Select Device to Fail...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-failure-type">Failure Signature</label>
+                                <select id="sim-failure-type" required>
+                                    <option value="cpu_spike">🚨 CPU Spike Simulation (score drops to 45, CPU state "critical")</option>
+                                    <option value="memory_leak">🚨 Memory Leak Simulation (score drops to 50, Memory state "critical")</option>
+                                    <option value="service_crash">🚨 System Service Crash Simulation (score drops to 30, Services state "critical")</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary">Inject Failure Signature</button>
+                            <div id="sim-status" class="success-msg"></div>
+                        </form>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form: New Policy -->
+    <div id="modal-policy" class="modal-overlay display-none">
+        <div class="modal-card glassmorphic">
+            <h3>Create Configuration Policy</h3>
+            <form id="new-policy-form" class="standard-form">
+                <div class="form-group">
+                    <label for="policy-id-input">Policy ID</label>
+                    <input type="text" id="policy-id-input" placeholder="pol_dev_workstation" required>
+                </div>
+                <div class="form-group">
+                    <label for="policy-rules-input">Policy Rules (JSON Format)</label>
+                    <textarea id="policy-rules-input" rows="8" placeholder='{
+  "allowed_tools": ["systemctl status", "cerynix-diag"],
+  "approval_mode": "ask_before_act"
+}' required></textarea>
+                </div>
+                <div class="flex-row gap-10 justify-end">
+                    <button type="button" onclick="closeModal('modal-policy')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Policy Rules</button>
+                </div>
+                <div id="policy-create-status" class="success-msg"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Form: New Incident -->
+    <div id="modal-incident" class="modal-overlay display-none">
+        <div class="modal-card glassmorphic">
+            <h3>Open Fleet Incident Ticket</h3>
+            <form id="new-incident-form" class="standard-form">
+                <div class="form-group">
+                    <label for="incident-id-input">Incident ID</label>
+                    <input type="text" id="incident-id-input" placeholder="inc_dev_workstation_1" required>
+                </div>
+                <div class="form-group">
+                    <label for="incident-device-input">Device Reference ID</label>
+                    <select id="incident-device-input" required>
+                        <option value="">Select Device...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="incident-title-input">Ticket Summary</label>
+                    <input type="text" id="incident-title-input" placeholder="High CPU utilization degraded alert" required>
+                </div>
+                <div class="form-group">
+                    <label for="incident-desc-input">Detailed Description</label>
+                    <textarea id="incident-desc-input" rows="4" placeholder="Optional details..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="incident-severity-input">Severity</label>
+                    <select id="incident-severity-input" required>
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="flex-row gap-10 justify-end">
+                    <button type="button" onclick="closeModal('modal-incident')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Open Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

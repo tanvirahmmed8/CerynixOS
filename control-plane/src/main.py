@@ -4,7 +4,10 @@ import json
 import uuid
 import time
 import logging
-from fastapi import FastAPI, Request
+from collections import defaultdict
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 # Ensure src directory is in path
@@ -12,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from database.connection import load_config
 from database.schema import init_db
-from routes import health, enrollment, devices, policies
+from routes import health, enrollment, devices, policies, updates, governance, observability, registry
 
 # Setup structured logging
 logging.basicConfig(
@@ -77,12 +80,90 @@ class CorrelationAndLoggingMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(CorrelationAndLoggingMiddleware)
 
+# ─── Security Headers Middleware ──────────────────────────────────────────────
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Adds HTTP hardening headers to every response."""
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "connect-src 'self';"
+        )
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+# ─── In-Memory Rate Limiter Middleware ────────────────────────────────────────
+# Simple per-IP sliding window counter. Not suitable for multi-process deployment.
+# Replace with Redis-backed rate limiter before production scaling.
+RATE_LIMIT_MAX_REQUESTS = 120   # max requests per window
+RATE_LIMIT_WINDOW_SECONDS = 60  # window duration
+RATE_LIMIT_EXEMPT_PATHS = {"/", "/styles.css", "/app.js", "/favicon.ico"}
+
+_rate_limit_counters: dict = defaultdict(list)
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Rejects requests exceeding rate limit threshold from a single IP."""
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path in RATE_LIMIT_EXEMPT_PATHS:
+            return await call_next(request)
+
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        window_start = now - RATE_LIMIT_WINDOW_SECONDS
+
+        # Prune timestamps outside the window
+        _rate_limit_counters[client_ip] = [
+            ts for ts in _rate_limit_counters[client_ip] if ts > window_start
+        ]
+
+        if len(_rate_limit_counters[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+            logger.warning(json.dumps({
+                "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                "level": "WARNING",
+                "event_type": "security_event",
+                "security_event_type": "suspicious_activity",
+                "detail": f"Rate limit exceeded: {client_ip} sent {len(_rate_limit_counters[client_ip])} requests in {RATE_LIMIT_WINDOW_SECONDS}s.",
+                "client_ip": client_ip,
+                "path": request.url.path,
+                "severity": "WARNING"
+            }))
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Rate limit exceeded. Please slow down your requests."}
+            )
+
+        _rate_limit_counters[client_ip].append(now)
+        return await call_next(request)
+
+app.add_middleware(RateLimitMiddleware)
+
 # Include Routers
 app.include_router(health.router)
 app.include_router(enrollment.router)
 app.include_router(devices.router)
 app.include_router(policies.router)
 app.include_router(policies.admin_router)
+app.include_router(updates.router)
+app.include_router(updates.admin_router)
+app.include_router(governance.router)
+app.include_router(governance.admin_router)
+app.include_router(observability.router)
+app.include_router(observability.admin_router)
+app.include_router(registry.router)
+app.include_router(registry.admin_router)
+
+# Mount Static Dashboard Files
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../static"))
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.on_event("startup")
 def startup_event():

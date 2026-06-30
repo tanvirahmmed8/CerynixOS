@@ -25,6 +25,7 @@ def get_devices(
     state: Optional[str] = None,
     group_id: Optional[str] = None,
     tag: Optional[str] = None,
+    channel: Optional[str] = None,
     query: Optional[str] = None
 ):
     """Admin-only endpoint to search and filter devices in the fleet."""
@@ -32,6 +33,7 @@ def get_devices(
         filter_state=state,
         filter_group=group_id,
         filter_tag=tag,
+        filter_channel=channel,
         query_text=query
     )
 
