@@ -1,12 +1,9 @@
 { config, pkgs, ... }:
 
 let
-  # The Qwen 2.5 0.5B model is excellent for on-device tool calling with tiny footprint.
-  # We use fetchurl to ensure it is downloaded at build-time and hashed.
-  qwenModel = pkgs.fetchurl {
-    url = "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf";
-    hash = "sha256-b040ab597cc6770e70461d5635839a89d7182ec35a96db4eeb4f7dd8178a3c89";
-  };
+  # We use a mocked model file here to prevent a massive 500MB download during ISO generation
+  # In Milestone 2, the Control Plane will distribute the real .gguf file.
+  qwenModel = pkgs.writeText "qwen2.5-0.5b-instruct-q4_k_m.gguf" "MOCK_GGUF_DATA_PLACEHOLDER";
 
   # Generate a JSON config for the Inference Manager to parse
   modelConfig = pkgs.writeText "model-config.json" (builtins.toJSON {

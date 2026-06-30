@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Core System Settings
@@ -13,6 +13,7 @@
   # Networking
   networking.hostName = "cerynixos";
   networking.networkmanager.enable = true;
+  networking.wireless.enable = false; # Override ISO default to prevent NetworkManager conflict
 
   # Base Packages (Strictly minimal tools required for system health and action broker)
   environment.systemPackages = with pkgs; [
@@ -25,10 +26,11 @@
   ];
 
   # Safe Defaults: Restrict SSH root login
+  # lib.mkForce is needed to override the NixOS ISO installer profile defaults
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "no";
-    settings.PasswordAuthentication = false;
+    settings.PermitRootLogin = lib.mkForce "no";
+    settings.PasswordAuthentication = lib.mkForce false;
   };
 
   # Immutable / Declarative enforcement

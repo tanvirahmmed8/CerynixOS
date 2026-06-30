@@ -23,13 +23,19 @@ in
     pluginRunnerScript
   ];
 
-  # Allow the Action Broker to manage plugins and run them as the isolated user
+  # Allow the Action Broker to manage plugins (runs as root/default)
   security.sudo.extraRules = [
     {
       users = [ "cerynix-broker" ];
       commands = [
         { command = "/run/current-system/sw/bin/cerynix-plugin-manager *"; options = [ "NOPASSWD" ]; }
-        { command = "/run/current-system/sw/bin/cerynix-plugin-runner *"; options = [ "SETENV", "NOPASSWD" ]; runAs = "cerynix-plugin-user"; }
+      ];
+    }
+    {
+      users = [ "cerynix-broker" ];
+      runAs = "cerynix-plugin-user";
+      commands = [
+        { command = "/run/current-system/sw/bin/cerynix-plugin-runner *"; options = [ "SETENV" "NOPASSWD" ]; }
       ];
     }
   ];

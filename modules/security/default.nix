@@ -22,12 +22,13 @@ in
 
   # 1. Full Disk Encryption (LUKS) Baseline
   # This serves as the declarative standard for physical CerynixOS installs.
-  # Note: Actually activating this requires matching hardware block devices.
-  boot.initrd.luks.devices."cryptroot" = {
-    # device = "/dev/nvme0n1p2"; # Stub
-    preLVM = true;
-    allowDiscards = true;
-  };
+  # Note: Actually activating this requires matching hardware block devices,
+  # so it is disabled for the generic ISO build.
+  # boot.initrd.luks.devices."cryptroot" = {
+  #   device = "/dev/nvme0n1p2"; # Stub
+  #   preLVM = true;
+  #   allowDiscards = true;
+  # };
 
   # 2. AppArmor Enforcement
   # Globally enable AppArmor for mandatory access control.
