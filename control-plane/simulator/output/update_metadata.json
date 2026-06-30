@@ -1,0 +1,7 @@
+{
+  "version": "cerynixos-gen-43",
+  "channel": "pilot",
+  "image_url": "https://registry.cerynix.internal/images/cerynixos-gen-43.iso",
+  "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "force_rollback": false
+}

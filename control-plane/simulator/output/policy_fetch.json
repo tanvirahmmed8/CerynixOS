@@ -1,0 +1,13 @@
+{
+  "policy_id": "pol_strict_dev_v2",
+  "version": 5,
+  "rules": {
+    "allowed_tools": [
+      "systemctl status",
+      "journalctl",
+      "nixos-rebuild dry-run",
+      "cerynix-optimizer apply"
+    ],
+    "approval_mode": "ask_before_act"
+  }
+}

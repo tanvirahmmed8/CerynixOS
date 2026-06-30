@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Device Inventory Registration Format",
+  "type": "object",
+  "required": [
+    "device_id",
+    "device_model",
+    "os_version",
+    "hardware_profile",
+    "installed_capabilities",
+    "enrollment_state"
+  ],
+  "properties": {
+    "device_id": {
+      "type": "string",
+      "description": "Unique hardware identifier (UUID)"
+    },
+    "device_model": {
+      "type": "string",
+      "description": "Manufacturer and model designation of the device"
+    },
+    "os_version": {
+      "type": "string",
+      "description": "Currently running CerynixOS generation or version string"
+    },
+    "hardware_profile": {
+      "type": "object",
+      "required": ["cpu_cores", "memory_bytes", "storage_bytes"],
+      "properties": {
+        "cpu_cores": { "type": "integer", "minimum": 1 },
+        "memory_bytes": { "type": "integer", "minimum": 0 },
+        "storage_bytes": { "type": "integer", "minimum": 0 }
+      },
+      "description": "System resource specifications"
+    },
+    "installed_capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of components, services, or tools installed on the device"
+    },
+    "enrollment_state": {
+      "type": "string",
+      "enum": ["enrolled", "active", "quarantined", "retired"],
+      "description": "Current device status in the fleet lifecycle"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Custom operator tags assigned to the device for grouping"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "ID of the fleet group this device belongs to"
+    }
+  }
+}
