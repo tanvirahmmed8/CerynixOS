@@ -1,9 +1,10 @@
 { config, pkgs, ... }:
 
 let
-  # We use a mocked model file here to prevent a massive 500MB download during ISO generation
-  # In Milestone 2, the Control Plane will distribute the real .gguf file.
-  qwenModel = pkgs.writeText "qwen2.5-0.5b-instruct-q4_k_m.gguf" "MOCK_GGUF_DATA_PLACEHOLDER";
+  # The user will provide their own custom/finetuned model manually.
+  # Just place your .gguf file at modules/ai-runtime/models/custom-model.gguf
+  # Nix will automatically copy it into the ISO during the build.
+  qwenModel = ./models/custom-model.gguf;
 
   # Generate a JSON config for the Inference Manager to parse
   modelConfig = pkgs.writeText "model-config.json" (builtins.toJSON {

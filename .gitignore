@@ -79,3 +79,6 @@ iso/
 # Project-local generated test data
 fixtures/generated/
 reports/
+
+# AI Models
+*.gguf

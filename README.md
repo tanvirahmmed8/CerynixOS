@@ -99,7 +99,8 @@ nix build .#nixosConfigurations.cerynixos-vm.config.system.build.vm
 ---
 
 ## Running the UI (Windows / Development)
-The CerynixAI Desktop UI can be previewed on any machine without booting the full OS:
+The CerynixAI Desktop UI can be previewed on any machine without booting the full OS. **Note: This HTTP server approach is a development mockup only.** In production, this will be replaced by a secure, native GTK+WebKit application with zero open network ports.
+
 ```bash
 python modules/desktop/src/ui_server.py
 ```
@@ -112,8 +113,9 @@ Open `http://localhost:3000` in your browser to see the glassmorphism interface.
 | Milestone | Description | Status |
 |-----------|-------------|--------|
 | **1 — Device Plane** | Local AI OS, Action Broker, Self-Healing, Plugins, Security | ✅ **COMPLETE** |
-| **2 — Control Plane** | Fleet Enrollment, Policy Engine, Update Orchestration, Admin Console | 🔵 Up Next |
-| **3+** | Advanced AI features, Multi-device sync, Enterprise SSO | 🗓️ Planned |
+| **2 — Control Plane** | Fleet Enrollment, Policy Engine, Update Orchestration, Admin Console | ✅ **COMPLETE** |
+| **3 — Consumer Launch** | OTA Update Server, ISO Distribution, Native GTK UI | ✅ **COMPLETE** |
+| **4+** | Advanced AI features, Multi-device sync, Enterprise SSO | 🗓️ Planned |
 
 See [`milestone_1_device_plane.md`](milestone_1_device_plane.md) and [`milestone_2_control_plane.md`](milestone_2_control_plane.md) for full task breakdowns.
 

@@ -21,3 +21,7 @@ As we conclude Milestone 1 (Device Plane) and prepare for Milestone 2 (Control P
 ## 5. Plugin Distribution (Phase 9)
 **Current State:** Plugins are installed via local directory copy.
 **M2 Requirement:** Implement a secure Plugin Marketplace/Registry where the `plugin_manager` can download and verify cryptographically signed packages over HTTPS.
+
+## 6. Desktop UI Architecture (Phase 6)
+**Current State:** The UI is served via a Python HTTP server (`ui_server.py`) on `localhost:3000`. This poses security risks (unencrypted local traffic, port scanning by other local apps, port collisions).
+**Future Requirement:** The HTTP server must be replaced by a native GTK+WebKit application. The CerynixAI UI should be launched via a native GNOME Shell Extension (as a status bar icon) and integrated directly into GNOME Settings, communicating directly over the UDS socket.

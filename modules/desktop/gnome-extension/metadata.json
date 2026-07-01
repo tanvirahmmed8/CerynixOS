@@ -1,0 +1,10 @@
+{
+  "name": "CerynixAI",
+  "description": "System tray integration for the CerynixOS Local AI Engine.",
+  "uuid": "cerynix-ai@cerynixos.org",
+  "shell-version": [
+    "45",
+    "46"
+  ],
+  "url": "https://github.com/cerynixos"
+}

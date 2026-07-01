@@ -26,4 +26,22 @@ in
       ];
     }
   ];
+
+  # Automated Daily Update Checks
+  systemd.timers.cerynixos-update-check = {
+    wantedBy = [ "timers.target" ];
+    partOf = [ "cerynixos-update-check.service" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+      RandomizedDelaySec = "1h"; # Jitter to prevent DDOSing our GitHub Pages
+    };
+  };
+
+  systemd.services.cerynixos-update-check = {
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${updateAgentScript}/bin/cerynix-update --check";
+    };
+  };
 }

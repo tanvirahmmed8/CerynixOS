@@ -163,30 +163,30 @@ This milestone covers the enterprise backend and operational layer: fleet enroll
 * [x] Document future SSO and TPM-backed identity extension path
 
 ## Phase 10: SRE, Release Operations, and Pilot Readiness
-* [ ] Define SLOs for critical backend services
-* [ ] Define error budgets and alert thresholds
-* [ ] Write runbooks for:
-* [ ] Enrollment failure
-* [ ] Policy publication failure
-* [ ] Update campaign failure
-* [ ] Audit pipeline degradation
-* [ ] Database capacity issue
-* [ ] Define backup and restore procedure
-* [ ] Define staging-to-production promotion checklist
-* [ ] Define pilot customer onboarding checklist
-* [ ] Run disaster recovery tabletop exercise
-* [ ] Create milestone readiness review deck
+* [x] Define SLOs for critical backend services
+* [x] Define error budgets and alert thresholds
+* [x] Write runbooks for:
+* [x] Enrollment failure
+* [x] Policy publication failure
+* [x] Update campaign failure
+* [x] Audit pipeline degradation
+* [x] Database capacity issue
+* [x] Define backup and restore procedure
+* [x] Define staging-to-production promotion checklist
+* [x] Define pilot customer onboarding checklist
+* [x] Run disaster recovery tabletop exercise
+* [x] Create milestone readiness review deck
 
 ## Phase 11: Quality, Testing, and Milestone Exit
-* [ ] Create API contract test suite
-* [ ] Create synthetic fleet integration test suite
-* [ ] Run policy resolution correctness tests
-* [ ] Run staged rollout simulation tests
-* [ ] Run audit retention and export tests
-* [ ] Run admin permission boundary tests
-* [ ] Freeze milestone scope
-* [ ] Publish Milestone 2 operator guide
-* [ ] Document open issues, technical debt, and integration notes for Milestone 1 convergence
+* [x] Create API contract test suite
+* [x] Create synthetic fleet integration test suite
+* [x] Run policy resolution correctness tests
+* [x] Run staged rollout simulation tests
+* [x] Run audit retention and export tests
+* [x] Run admin permission boundary tests
+* [x] Freeze milestone scope
+* [x] Publish Milestone 2 operator guide
+* [x] Document open issues, technical debt, and integration notes for Milestone 1 convergence
 
 ---
 
@@ -197,13 +197,13 @@ This milestone covers the enterprise backend and operational layer: fleet enroll
 * Backend rollout logic should be validated with synthetic fleets before endpoint integration
 
 ## Milestone Exit Deliverables
-* [ ] Fleet enrollment service
-* [ ] Device inventory and grouping
-* [ ] Policy engine v1
-* [ ] Update orchestration v1
-* [ ] Audit and compliance baseline
-* [ ] Fleet health and support operations views
-* [ ] Artifact/model/plugin registry foundation
-* [ ] Admin console v1
-* [ ] SRE runbooks and pilot readiness package
-* [ ] Milestone validation report
+* [x] Fleet enrollment service
+* [x] Device inventory and grouping
+* [x] Policy engine v1
+* [x] Update orchestration v1
+* [x] Audit and compliance baseline
+* [x] Fleet health and support operations views
+* [x] Artifact/model/plugin registry foundation
+* [x] Admin console v1
+* [x] SRE runbooks and pilot readiness package
+* [x] Milestone validation report

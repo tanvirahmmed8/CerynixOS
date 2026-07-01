@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "release_date": "2026-06-30T12:00:00Z",
+  "iso_url": "https://github.com/cerynixos/cerynixos/releases/download/v1.0.0/cerynixos-1.0.0-x86_64.iso",
+  "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "urgency": "low",
+  "changelog": [
+    "Initial public beta release of CerynixOS.",
+    "Includes local Qwen 2.5 0.5B AI model.",
+    "Full LUKS disk encryption support."
+  ]
+}
